@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <SPZ2_PATH Condition="'$(SPZ2_PATH)' == ''">D:\SteamLibrary\steamapps\common\shapez 2\shapez 2_Data\Managed</SPZ2_PATH>
+    <SPZ2_PERSISTENT Condition="'$(SPZ2_PERSISTENT)' == ''">C:\Users\garre\AppData\LocalLow\tobspr Games\shapez 2</SPZ2_PERSISTENT>
+	<SPZ2_SHIFTER Condition="'$(SPZ2_SHIFTER)' == ''">D:\SteamLibrary\steamapps\workshop\content\2162800\3542611357\ShapezShifter.dll</SPZ2_SHIFTER>
+  </PropertyGroup>
+</Project>

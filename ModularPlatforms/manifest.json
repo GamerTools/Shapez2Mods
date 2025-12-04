@@ -1,0 +1,20 @@
+{
+  "Version": "0.0.1",
+  "Description": "Modular Platforms",
+  "Author": "FatcatX",
+  "SavedModVersionCompabilityRangeWithSelf": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": true,
+  "DisablesAchievements": false,
+  "Conflicts": [],
+  "Assemblies": [
+    "ModularPlatforms.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "steam:3542611357",
+      "ModTitle": "Shapez Shifter",
+      "Version": "0.*.*"
+    }
+  ]
+}
