@@ -1,0 +1,20 @@
+{
+  "Version": "0.0.1",
+  "Description": "Producer Pixel",
+  "Author": "FatcatX",
+  "SavedModVersionCompabilityRangeWithSelf": "*",
+  "GameVersionSupportRange": "*",
+  "AffectsSaveGames": true,
+  "DisablesAchievements": false,
+  "Conflicts": [],
+  "Assemblies": [
+    "ProdPixel.dll"
+  ],
+  "Dependencies": [
+    {
+      "ModId": "steam:3542611357",
+      "ModTitle": "Shapez Shifter",
+      "Version": "0.*.*"
+    }
+  ]
+}
