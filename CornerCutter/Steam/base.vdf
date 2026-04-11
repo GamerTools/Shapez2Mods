@@ -1,10 +1,11 @@
 "workshopitem"
 {
     "appid" "2162800"
-    "publishedfileid" "3560404770"
-    "contentfolder" "${CONTENT_PATH}"
-    "previewfile" "${PREVIEW_IMG}"
+    "publishedfileid" "3704835649"
+    "contentfolder" "/mnt/c/Users/garre/AppData/LocalLow/tobspr Games/shapez 2/mods/CornerCutter"
+    "previewfile" "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/preview.png"
     "visibility" "0"
-    "title" "Diagonal Cutters"
-    "description" "Adds a diagonal cutting building to the game"
+    "title" "Corner Cutter"
+    "description" "Adds a corner cutting machine to the game"
+    "changenote" ""
 }

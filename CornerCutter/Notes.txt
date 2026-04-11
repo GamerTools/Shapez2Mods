@@ -1,0 +1,30 @@
+11-Apr-2026
+Tried uploading a mod
+
+# steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/base.tmp.vdf" +quit;
+
+Loading Steam API...OK
+Logging in using cached credentials.
+Logging in user 'fatcatx' [U:1:10076779] to Steam Public...OK
+Waiting for client config...OK
+Waiting for user info...Waiting for compat in post-logon took: 0.142464sOK
+Create new workshop item ( PublishFileID 3704763005).
+
+Preparing update...
+Preparing content...IPC function call IClientUGC::GetItemUpdateProgress took too long: 90 msec
+
+Uploading content...IPC function call IClientUGC::GetItemUpdateProgress took too long: 142 msec
+ERROR! Failed to update workshop item (File Not Found).
+Unloading Steam API...Work thread 'CJobMgr::m_WorkThreadPool:2' is marked exited, but we could not immediately join prior to deleting -- proceeding without join
+OK
+
+Now Steam returns an error for Shapez2 mods (in Steam but web browser seems okay)
+https://steamcommunity.com/workshop/browse/?appid=2162800&browsesort=trend&section=readytouseitems
+Sorry!
+An error was encountered while processing your request.
+
+I did see my broken mod listed (somehow after trying a lot of different things) and I deleted it.
+But Steam still has the error.
+
+Was able to find the broken mod and delete it.
+Cleared the web cache in the browser and Steam app, and now able to see the workshop items again.
