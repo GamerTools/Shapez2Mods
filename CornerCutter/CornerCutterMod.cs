@@ -11,30 +11,30 @@ using ShapezShifter.Kit;
 using ShapezShifter.Textures;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
-using Renderer = DiagonalCutterSimulationRenderer;
-using Simulation = DiagonalCutterSimulation;
-using RendererData = IDiagonalCutterDrawData;
+using Renderer = CornerCutterSimulationRenderer;
+using Simulation = CornerCutterSimulation;
+using RendererData = ICornerCutterDrawData;
 
 [UsedImplicitly]
-public class DiagonalCuttersMod : IMod
+public class CornerCuttersMod : IMod
 {
-    public DiagonalCuttersMod(ILogger logger)
+    public CornerCuttersMod(ILogger logger)
     {
-        BuildingDefinitionGroupId groupId = new("DiagonalCutterGroup");
-        BuildingDefinitionId definitionId = new("DiagonalCutter");
+        BuildingDefinitionGroupId groupId = new("CornerCutterGroup");
+        BuildingDefinitionId definitionId = new("CornerCutter");
 
-        string titleId = "building-variant.cutter-diagonal.title";
-        string titleDescription = "building-variant.cutter-diagonal.description";
+        string titleId = "building-variant.cutter-corner.title";
+        string titleDescription = "building-variant.cutter-corner.description";
 
         ModFolderLocator modResourcesLocator =
-            ModDirectoryLocator.CreateLocator<DiagonalCuttersMod>().SubLocator("Resources");
+            ModDirectoryLocator.CreateLocator<CornerCuttersMod>().SubLocator("Resources");
 
         using var assetBundleHelper =
-            AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<DiagonalCuttersMod>("Resources/DiagonalCutter");
+            AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<CornerCuttersMod>("Resources/CornerCutter");
 
-        string iconPath = modResourcesLocator.SubPath("DiagonalCutter_Icon.png");
+        string iconPath = modResourcesLocator.SubPath("CornerCutter_Icon.png");
 
-        IBuildingGroupBuilder diagonalCutterGroup = BuildingGroup.Create(groupId)
+        IBuildingGroupBuilder cornerCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(titleDescription.T())
            .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
@@ -47,9 +47,9 @@ public class DiagonalCuttersMod : IMod
            .AddShapeOutput(ShapeConnectorConfig.DefaultOutput())
            .Build();
 
-        IBuildingBuilder diagonalCutterBuilder = Building.Create(definitionId)
+        IBuildingBuilder cornerCutterBuilder = Building.Create(definitionId)
            .WithConnectorData(connectorData)
-           .DynamicallyRendering<Renderer, Simulation, RendererData>(new DiagonalCutterDrawData())
+           .DynamicallyRendering<Renderer, Simulation, RendererData>(new CornerCutterDrawData())
            .WithStaticDrawData(CreateDrawData(modResourcesLocator))
            .WithoutSound()
            .WithoutSimulationConfiguration()
@@ -61,13 +61,13 @@ public class DiagonalCuttersMod : IMod
            .WithCustomRequirements(Array.Empty<ResearchMechanicId>(), Array.Empty<ResearchUpgradeId>());
         AtomicBuildings.Extend()
            .AllScenarios()
-           .WithBuilding(diagonalCutterBuilder, diagonalCutterGroup)
+           .WithBuilding(cornerCutterBuilder, cornerCutterGroup)
            .UnlockedWithNewSideUpgrade(sideUpgradeBuilder)
            .WithDefaultPlacement()
            .InToolbar(ToolbarElementLocator.Root().ChildAt(0).ChildAt(2).ChildAt(^1).InsertAfter())
-           .WithSimulation(new DiagonalCutterFactoryBuilder(), logger)
+           .WithSimulation(new CornerCutterFactoryBuilder(), logger)
            .WithAtomicShapeProcessingModules(BuiltinResearchSpeed.CutterSpeed, 2.0f)
-           .WithPrediction(new DiagonalCutterPredictionFactoryBuilder(), logger)
+           .WithPrediction(new CornerCutterPredictionFactoryBuilder(), logger)
            .Build();
     }
 
@@ -87,7 +87,7 @@ public class DiagonalCuttersMod : IMod
 
     private static BuildingDrawData CreateDrawData(ModFolderLocator modResourcesLocator)
     {
-        string baseMeshPath = modResourcesLocator.SubPath("DiagonalCutter.fbx");
+        string baseMeshPath = modResourcesLocator.SubPath("CornerCutter.fbx");
         Mesh baseMesh = FileMeshLoader.LoadSingleMeshFromFile(baseMeshPath);
 
         LOD6Mesh baseModLod = MeshLod.Create().AddLod0Mesh(baseMesh).BuildLod6Mesh();
@@ -100,7 +100,7 @@ public class DiagonalCuttersMod : IMod
             baseModLod.LODClose,
             new LODEmptyMesh(),
             BoundingBoxHelper.CreateBasicCollider(baseMesh),
-            new DiagonalCutterDrawData(),
+            new CornerCutterDrawData(),
             false,
             null,
             false);

@@ -1,8 +1,8 @@
 using Game.Core.Serialization;
 using Game.Core.Simulation;
 
-[SyncableIdentifier("DiagonalCutterState")]
-public class DiagonalCutterSimulationState : ISimulationState
+[SyncableIdentifier("CornerCutterState")]
+public class CornerCutterSimulationState : ISimulationState
 {
     public readonly BeltLaneState InputLaneState = new();
     public readonly BeltLaneState OutputLaneState = new();

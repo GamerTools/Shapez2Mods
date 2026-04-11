@@ -1,4 +1,4 @@
-﻿internal class DiagonalCutterConfiguration : IDiagonalCutterConfiguration
+﻿internal class CornerCutterConfiguration : ICornerCutterConfiguration
 {
     public BeltSpeed BeltSpeed => _Speed;
 
@@ -7,7 +7,7 @@
 
     private readonly BuffableBeltSpeed _Speed;
 
-    public DiagonalCutterConfiguration(
+    public CornerCutterConfiguration(
         BuffableBeltSpeed.DiscreteSpeed beltSpeed,
         BuffableBeltDelay.DiscreteDuration cutDuration,
         ResearchSpeedId researchSpeed)

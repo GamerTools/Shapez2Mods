@@ -29,5 +29,5 @@ ManifestFileVersion: 0
         Script: {instanceID: 0}
         SerializeReferenceClassIdentifiers: []
         Assets:
-        - Assets/Icons/DiagonalCutterIcon.png
+        - Assets/Icons/CornerCutterIcon.png
         Dependencies: []

@@ -1,6 +1,6 @@
 using Game.Core.Simulation;
 
-public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState>, IItemSimulation, IUpdatableSimulation
+public class CornerCutterSimulation : Simulation<CornerCutterSimulationState>, IItemSimulation, IUpdatableSimulation
 {
     public ShapeCollapseResult CurrentWaste => State.CurrentWaste;
     public ShapeCollapseResult CurrentCollapseResult => State.CurrentCollapseResult;
@@ -16,11 +16,11 @@ public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState
     /// <inheritdoc />
     public int NumItemProviders => 1;
 
-    public DiagonalCutterSimulation(
-        DiagonalCutterSimulationState simulationState,
-        IDiagonalCutterConfiguration cutterConfiguration,
+    public CornerCutterSimulation(
+        CornerCutterSimulationState simulationState,
+        ICornerCutterConfiguration cutterConfiguration,
         IShapeRegistry shapeRegistry,
-        ShapeOperationDiagonalCut diagonalCut) : base(simulationState)
+        ShapeOperationCornerCut cornerCut) : base(simulationState)
     {
         OutputLane = new BeltLane(cutterConfiguration.BeltSpeed, simulationState.OutputLaneState);
         ProcessingLane = new DelayBeltLane(
@@ -32,7 +32,7 @@ public class DiagonalCutterSimulation : Simulation<DiagonalCutterSimulationState
         ProcessingLane.AcceptHook = (IItemReceiver _, ref IBeltItem item, ref Ticks _) =>
         {
             ShapeDefinition definition = ((ShapeItem)item).Definition;
-            ShapeDiagonalCutResult result = diagonalCut.Execute(definition);
+            ShapeCornerCutResult result = cornerCut.Execute(definition);
 
             State.CurrentWaste = result.LeftSide;
             State.CurrentCollapseResult = result.RightSide;

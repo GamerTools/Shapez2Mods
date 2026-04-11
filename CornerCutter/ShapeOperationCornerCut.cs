@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDiagonalCutResult>, IItemOperation1In1Out
+public class ShapeOperationCornerCut : ShapeOperation<ShapeDefinition, ShapeCornerCutResult>, IItemOperation1In1Out
 {
     private readonly int MaxShapeLayers;
 
-    public ShapeOperationDiagonalCut(
+    public ShapeOperationCornerCut(
         int maxShapeLayers,
         [DisallowNull] IShapeRegistry shapeRegistry,
         [DisallowNull] IShapeIdManager shapeIdManager) : base(shapeRegistry, shapeIdManager)
@@ -20,12 +20,12 @@ public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDi
             output1 = null;
             return false;
         }
-        ShapeDiagonalCutResult shapeCutResult = Execute(shapeItem.Definition);
+        ShapeCornerCutResult shapeCutResult = Execute(shapeItem.Definition);
         output1 = shapeCutResult.LeftSide != null ? ShapeRegistry.GetItem(shapeCutResult.LeftSide.Shape) : (IItem)null;
         return true;
     }
 
-    public override ShapeDiagonalCutResult ExecuteInternal(ShapeDefinition shape)
+    public override ShapeCornerCutResult ExecuteInternal(ShapeDefinition shape)
     {
         ShapeLogic.UnfoldResult unfolded = ShapeLogic.Unfold(shape.Layers);
         //var firstSide = unfolded.References.Where(reference => reference.PartIndex % 2 == 0).ToList();
@@ -46,6 +46,6 @@ public class ShapeOperationDiagonalCut : ShapeOperation<ShapeDefinition, ShapeDi
             ShapeIdManager,
             unfolded.FusedReferences);
 
-        return new ShapeDiagonalCutResult(leftResult, rightResult);
+        return new ShapeCornerCutResult(leftResult, rightResult);
     }
 }

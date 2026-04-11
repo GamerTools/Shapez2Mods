@@ -2,17 +2,17 @@
 using JetBrains.Annotations;
 
 [UsedImplicitly]
-public class DiagonalCutterSimulationRenderer
-    : StatelessBuildingSimulationRenderer<DiagonalCutterSimulation, IDiagonalCutterDrawData>
+public class CornerCutterSimulationRenderer
+    : StatelessBuildingSimulationRenderer<CornerCutterSimulation, ICornerCutterDrawData>
 {
-    public DiagonalCutterSimulationRenderer(
+    public CornerCutterSimulationRenderer(
         IMapModel map,
         IBuildingSoundManager soundManager,
         IShapeRegistry shapeRegistry) : base(map) { }
 
     public override void OnDrawDynamic(in Entity entity, FrameDrawOptions options)
     {
-        DiagonalCutterSimulation simulation = entity.Simulation;
+        CornerCutterSimulation simulation = entity.Simulation;
 
         DrawBeltItem(entity.Transform, options, simulation.InputLane, entity.DrawData.InputLaneRenderingDefinition);
         DrawBeltItem(entity.Transform, options, simulation.OutputLane, entity.DrawData.OutputLaneRenderingDefinition);

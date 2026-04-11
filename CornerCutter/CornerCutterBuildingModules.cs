@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class DiagonalCutterBuildingModules : IBuildingModules
+public class CornerCutterBuildingModules : IBuildingModules
 {
     public IEnumerable<IHUDSidePanelModuleData> GetInfoModules(IBuildingDefinition definition)
     {

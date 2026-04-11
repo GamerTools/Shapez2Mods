@@ -1,4 +1,4 @@
-public interface IDiagonalCutterDrawData : IBuildingCustomDrawData
+public interface ICornerCutterDrawData : IBuildingCustomDrawData
 {
     IBeltLaneRendererDefinition InputLaneRenderingDefinition { get; }
     IBeltLaneRendererDefinition OutputLaneRenderingDefinition { get; }

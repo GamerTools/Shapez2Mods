@@ -1,6 +1,6 @@
 using Game.Core.Coordinates;
 
-internal class DiagonalCutterDrawData : IDiagonalCutterDrawData
+internal class CornerCutterDrawData : ICornerCutterDrawData
 {
     public IBeltLaneRendererDefinition InputLaneRenderingDefinition => new MyBeltLaneRenderingDefinition(
         new LocalVector(-0.5f, 0.0f, 0.0f),
