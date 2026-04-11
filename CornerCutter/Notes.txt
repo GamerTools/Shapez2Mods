@@ -28,3 +28,6 @@ But Steam still has the error.
 
 Was able to find the broken mod and delete it.
 Cleared the web cache in the browser and Steam app, and now able to see the workshop items again.
+
+Command to publish the mod...
+# steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/base.vdf" +quit;
