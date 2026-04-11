@@ -1,0 +1,21 @@
+{
+    "Version": "0.6.0",
+    "Title": "Corner Cutter",
+    "Description": "Cuts one of the corners of a shape",
+    "Author": "FatcatX",
+    "SavedModVersionCompabilityRangeWithSelf": "0.*.*",
+    "GameVersionSupportRange": "*",
+    "AffectsSaveGames": true,
+    "DisablesAchievements": true,
+    "Conflicts": [],
+    "Assemblies": [
+        "CornerCutter.dll"
+    ],
+    "Dependencies": [
+        {
+            "ModId": "steam:3542611357",
+            "ModTitle": "Shapez Shifter",
+            "Version": "1.0.*"
+        }
+    ]
+}
