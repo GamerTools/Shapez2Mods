@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Core.Collections.Scoped;
+﻿using Core.Collections.Scoped;
 using Core.Localization;
 using Game.Core.Coordinates;
 using Game.Core.Research;
@@ -12,7 +9,11 @@ using ShapezShifter.Flow.Research;
 using ShapezShifter.Flow.Toolbar;
 using ShapezShifter.Kit;
 using ShapezShifter.Textures;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
+using UnityEngine;
 using ILogger = Core.Logging.ILogger;
 
 [UsedImplicitly]
@@ -64,12 +65,13 @@ public class MyMod : IMod
 
         IIslandBuilder islandBuilder = Island.Create(definitionId)
            .WithLayout(layout)
+           .WithBoundingCollider()
            .WithConnectorData(FoundationConnectors(layout))
            .WithInteraction(flippable: false, canHoldBuildings: true)
            .WithDefaultChunkCost()
            .WithRenderingOptions(ChunkDrawingOptions(), drawPlayingField: true);
 
-        IToolbarElementLocator platformsGroup = ToolbarElementLocator.Root().ChildAt(5);
+        IToolbarElementLocator platformsGroup = ToolbarElementLocator.Root().ChildAt(4);
         IToolbarElementLocator lineFoundations = platformsGroup.ChildAt(4);
 
         IToolbarEntryInsertLocation toolbarEntryLocation = lineFoundations.ChildAt(^1).InsertAfter();
@@ -85,11 +87,11 @@ public class MyMod : IMod
            .Build();
         return;
 
-        ResearchUpgradeId MilestoneSelectorBasedOnMode(string scenario)
+        static ResearchUpgradeId MilestoneSelectorBasedOnMode(ScenarioId scenarioId)
         {
-            string milestoneId = scenario.ToLower().Contains("converter-scenario")
-                ? "RNTier1_Onboarding"
-                : "RNInitial";
+            string milestoneId = scenarioId.Id.ToLower().Contains("converter-regular-scenario")
+                ? "ConverterMilestoneTier_Initial"
+                : "Milestone_Initial";
             return new ResearchUpgradeId(milestoneId);
         }
     }
