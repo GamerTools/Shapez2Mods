@@ -1,0 +1,23 @@
+Game command line options:
+--set-modding-env-vars
+--ignore-mods
+...
+
+Environment variables:
+SPZ2_PATH=D:\SteamLibrary\steamapps\common\shapez 2\shapez 2_Data\Managed
+SPZ2_PERSISTENT=C:/Users/garre/AppData/LocalLow/tobspr Games/shapez 2
+SPZ2_SHIFTER=D:\SteamLibrary\steamapps\workshop\content\2162800\3542611357\ShapezShifter.dll
+
+Compile ShapezShifter.dll locally
+Change env variable
+SPZ2_SHIFTER=C:\Users\garre\AppData\LocalLow\tobspr Games\shapez 2\mods\ShapezShifter\ShapezShifter.dll
+
+Change this...
+        <Reference Include="ShapezShifter">
+            <HintPath>$(SPZ2_SHIFTER)</HintPath>
+            <Private>False</Private>
+        </Reference>
+
+To this...
+		<ProjectReference Include="..\..\shapez2-shifter\ShapezShifter\ShapezShifter.csproj" />
+
