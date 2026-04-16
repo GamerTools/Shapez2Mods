@@ -5,6 +5,7 @@ using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Hijack;
 using ShapezShifter.SharpDetour;
+using ShapezShifter.Utilities;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,7 +23,6 @@ public class MyMod : IMod
     public static ILogger logger;
     private Hook SIPRHook;
     private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
-    private GameMode Mode;
 
     public MyMod(ILogger logger)
     {
@@ -30,9 +30,11 @@ public class MyMod : IMod
 
         MyMod.logger.Info.Log("Hello from Test Mod!");
 
+        // Initialize ClassInspector with logger
+        ClassInspector.SetLogger(logger);
+
         consoleRewirer = this.AddModCommands();
         AddConsoleCommands();
-        //Mode = GameHelper.Core.Mode;
 
         //CreateHooks();
     }
@@ -48,42 +50,28 @@ public class MyMod : IMod
             console.Register("test", context =>
             {
                 context.Output($"Layers: {GameHelper.Core.Mode.Scenario.ResearchConfig.MaxShapeLayers}");
-                context.Output($" Parts: {GameHelper.Core.Mode.ShapesConfiguration.PartCount}");
+                context.Output($"Parts: {GameHelper.Core.Mode.ShapesConfiguration.PartCount}");
             });
-        });
-    }
 
-    /*
-    public void AddTrainCommands() {
-        ITrainRegistry trainRegistry;
-        consoleRewirer.AddCommand(console =>
-        {
-            console.Register("listtrains", context =>
+            // Example: Display class members recursively
+            console.Register("inspect", context =>
             {
-                if (trainRegistry == null)
-                {
-                    context.Output("Train registry is not available.");
-                    return;
-                }
+                //var core = GameHelper.Core;
+                //context.Output("Inspecting SandboxItemProducerSimulationRenderer...");
+                context.Output("Inspecting GameHelper...");
+                ClassInspector.DisplayClassMembers(typeof(GameHelper), null, maxDepth: 3);
+                context.Output("Inspection complete. Check logs for details.");
+            });
 
-                var trains = trainRegistry.GetAllTrains();
-                if (trains == null || !trains.Any())
-                {
-                    context.Output("No trains found in the game.");
-                    return;
-                }
-
-                context.Output($"Found {trains.Count()} train(s):");
-                int index = 1;
-                foreach (var train in trains)
-                {
-                    context.Output($"  {index}. Train ID: {train.Id}, Cars: {train.CarCount}");
-                    index++;
-                }
+            // Example: Inspect an instance with values
+            console.Register("inspectmod", context =>
+            {
+                context.Output("Inspecting MyMod instance...");
+                ClassInspector.DisplayClassMembers(typeof(MyMod), this, maxDepth: 1);
+                context.Output("Inspection complete. Check logs for details.");
             });
         });
     }
-    */
 
     public void CreateHooks()
     {
@@ -94,32 +82,6 @@ public class MyMod : IMod
         SIPRHook = new Hook(
             typeof(SandboxItemProducerSimulationRenderer).GetMethod("OnDrawDynamic", FLAGS),
             typeof(MyMod).GetMethod("OnDrawDynamic", FLAGS));
-
-        //CreateSIPRHook = Replace
-        //    <SandboxItemProducerSimulationRenderer, StatelessBuildingSimulationRenderer<ItemProducerSimulation, SandboxItemProducerMetaBuildingDefinition.DrawData>.Entity, FrameDrawOptions>(
-        //        (renderer, entity, options) => renderer.OnDrawDynamic(entity, options),
-        //        OnDrawDynamic;
-    }
-
-    public static void OnDrawDynamic(
-        SandboxItemProducerSimulationRenderer self,
-        in StatelessBuildingSimulationRenderer<ItemProducerSimulation, SandboxItemProducerMetaBuildingDefinition.DrawData>.Entity entity,
-        FrameDrawOptions options)
-    {
-        self.DrawBeltItem(in entity.Transform, options, entity.Simulation.OutputLane, entity.DrawData.OutputLaneRenderingDefinition);
-        ItemProducerConfiguration itemProducerConfiguration = (ItemProducerConfiguration)entity.Building.Configuration;
-        if (itemProducerConfiguration.ResourceItem != null)
-        {
-            options.Renderers.Shapes.Add(
-                options.Renderers.BeltItems.GetDrawData(itemProducerConfiguration.ResourceItem, options.LOD.ShapeLOD),  // 2
-                FastMatrix.TranslateScale(new LocalVector(0f, 0f, 0.66f) * entity.Transform, new float3(3.6f, 3.6f, 3.6f)));
-        }
-    }
-
-    public static Hook Replace<TObject, TArg0, TArg1>(Expression<Action<TObject, TArg0, TArg1>> original, Action<TObject, TArg0, TArg1> replacement)
-    {
-        MethodInfo runtimeMethod = DetourHelper.GetRuntimeMethod<TObject>(original);
-        return new Hook(runtimeMethod, replacement);
     }
 
     public void Dispose()
@@ -141,55 +103,7 @@ class Stuff
         logger.Info.Log("Debugger attached!");
         System.Diagnostics.Debugger.Break(); // Optional: Break immediately
 #endif
-    Type classType = typeof(SandboxItemProducerSimulationRenderer);
 
-    // Methods
-    MethodInfo[] methods = classType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
-        if (methods.Length > 0)
-        {
-            logger.Info.Log($"\n--- Methods ({methods.Length}) ---");
-            foreach (MethodInfo method in methods)
-            {
-                if (method.IsSpecialName) continue; // Skip property getters/setters
-
-                string accessibility = method.IsPublic ? "public" : method.IsPrivate ? "private" : "protected";
-    string modifier = method.IsStatic ? "static " : method.IsVirtual ? "virtual " : "";
-    ParameterInfo[] methodParams = method.GetParameters();
-    string paramStr = string.Join(", ", methodParams.Select(p =>
-    {
-        string modifier = p.IsIn ? "in " : p.IsOut ? "out " : p.ParameterType.IsByRef ? "ref " : "";
-        string typeName = p.ParameterType.IsByRef ? p.ParameterType.GetElementType().Name : p.ParameterType.Name;
-        return $"{modifier}{typeName} {p.Name}";
-    }));
-    logger.Info.Log($"  {accessibility} {modifier}{method.ReturnType.Name} {method.Name}({paramStr})");
-            }
-        }
-
-        MethodInfo method1 = classType.GetMethod("OnDrawDynamic");
-if (method1 == null)
-{
-    logger.Error.Log("Failed to find method OnDrawDynamic in SandboxItemProducerSimulationRenderer.");
-    return;
-}
-
-        //ParameterInfo[] parameters = method.GetParameters();
-
-        //logger.Info.Log($"Method: {method.Name}");
-        //logger.Info.Log($"Return Type: {method.ReturnType.FullName}");
-        //logger.Info.Log($"Parameter Count: {parameters.Length}");
-
-        //for (int i = 0; i < parameters.Length; i++)
-        //{
-        //    ParameterInfo param = parameters[i];
-        //    logger.Info.Log($"Parameter {i}:");
-        //    logger.Info.Log($"  Name: {param.Name}");
-        //    logger.Info.Log($"  Type: {param.ParameterType.FullName}");
-        //    logger.Info.Log($"  IsIn: {param.IsIn}");
-        //    logger.Info.Log($"  IsOut: {param.IsOut}");
-        //    logger.Info.Log($"  IsByRef: {param.ParameterType.IsByRef}");
-        //    logger.Info.Log($"  Position: {param.Position}");
-        //}
-        //new SIPRInterceptor();
     }
 
 }

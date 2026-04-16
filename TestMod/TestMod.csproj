@@ -185,5 +185,7 @@
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
-
+<PropertyGroup>
+  <NoWarn>$(NoWarn);CS0436</NoWarn>
+</PropertyGroup>
 </Project>
