@@ -74,25 +74,15 @@ namespace ShapezShifter.Utilities
                     object value = null;
                     string valueStr = "";
 
-                    // Try to get the actual value if instance is provided
-                    if (instance != null && !field.IsStatic)
+                    // Try to get the actual value (static fields or instance fields when instance is provided)
+                    bool shouldGetValue = field.IsStatic || instance != null;
+                    if (shouldGetValue)
                     {
                         try
                         {
-                            value = field.GetValue(instance);
-                            valueStr = value != null ? $" = {FormatValue(value)}" : " = null";
-                        }
-                        catch (Exception ex)
-                        {
-                            valueStr = $" [Error getting value: {ex.Message}]";
-                        }
-                    }
-                    else if (field.IsStatic)
-                    {
-                        try
-                        {
-                            value = field.GetValue(null);
-                            valueStr = value != null ? $" = {FormatValue(value)}" : " = null";
+                            object target = field.IsStatic ? null : instance;
+                            value = field.GetValue(target);
+                            valueStr = value == null ? " = null" : $" = {FormatValue(value)}";
                         }
                         catch (Exception ex)
                         {
@@ -134,27 +124,19 @@ namespace ShapezShifter.Utilities
                     object value = null;
                     string valueStr = "";
 
-                    // Try to get the actual value if instance is provided and property has a getter
+                    // Try to get the actual value if property has a getter (static properties or instance properties when instance is provided)
                     if (prop.CanRead)
                     {
-                        if (instance != null && !(prop.GetMethod?.IsStatic ?? false))
+                        bool isStatic = prop.GetMethod?.IsStatic ?? false;
+                        bool shouldGetValue = isStatic || instance != null;
+
+                        if (shouldGetValue)
                         {
                             try
                             {
-                                value = prop.GetValue(instance);
-                                valueStr = value != null ? $" = {FormatValue(value)}" : " = null";
-                            }
-                            catch (Exception ex)
-                            {
-                                valueStr = $" [Error getting value: {ex.Message}]";
-                            }
-                        }
-                        else if (prop.GetMethod?.IsStatic ?? false)
-                        {
-                            try
-                            {
-                                value = prop.GetValue(null);
-                                valueStr = value != null ? $" = {FormatValue(value)}" : " = null";
+                                object target = isStatic ? null : instance;
+                                value = prop.GetValue(target);
+                                valueStr = value == null ? " = null" : $" = {FormatValue(value)}";
                             }
                             catch (Exception ex)
                             {
