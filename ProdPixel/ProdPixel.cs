@@ -1,10 +1,6 @@
 ﻿using Game.Core.Coordinates;
 using JetBrains.Annotations;
 using MonoMod.RuntimeDetour;
-using ShapezShifter.SharpDetour;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Unity.Mathematics;
 
