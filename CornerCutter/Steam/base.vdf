@@ -6,6 +6,10 @@
     "previewfile" "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/preview.png"
     "visibility" "0"
     "title" "Corner Cutter"
-    "description" "Adds a corner cutting machine to the game"
+    "description" "Destroys a corner part of a shape"
     "changenote" ""
+    "tags"
+    {
+        "0" "New Machines"
+    }
 }

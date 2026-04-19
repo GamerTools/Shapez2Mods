@@ -2,6 +2,6 @@
   "en-US":
   {
     "building-variant.cutter-corner.title": "Corner Destroyer",
-    "building-variant.cutter-corner.description": "<gl>Destroys</gl> the <gl>Corner Part</gl> of a shape."
+    "building-variant.cutter-corner.description": "<gl>Destroys</gl> a <gl>Corner Part</gl> of a shape."
   }
 }
