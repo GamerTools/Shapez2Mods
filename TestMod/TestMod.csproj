@@ -28,7 +28,7 @@
 	</ItemGroup>
     <ItemGroup>
 		<Reference Include="ShapezShifter">
-			<HintPath>$(SPZ2_SHIFTER)</HintPath>
+			<HintPath>$(SPZ2_PERSISTENT)\mods\ShapezShifter\ShapezShifter.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 
@@ -143,6 +143,10 @@
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Cysharp.Threading.Tasks">
+			<HintPath>$(SPZ2_PATH)\UniTask.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="UnityEngine.AssetBundleModule">

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using Core.Dependency;
 using ILogger = Core.Logging.ILogger;
 
 namespace ShapezShifter.Utilities
@@ -198,6 +200,46 @@ namespace ShapezShifter.Utilities
 
             // Default ToString()
             return value.ToString();
+        }
+
+        /// <summary>
+        /// Logs all classes (types) stored in a DependencyContainer
+        /// </summary>
+        /// <param name="container">The DependencyContainer to inspect</param>
+        public static void LogDependencyContainerClasses(DependencyContainer container)
+        {
+            if (container == null)
+            {
+                _logger?.Info.Log("DependencyContainer is null");
+                return;
+            }
+
+            var boundInstances = container.BoundInstancesByResolveType;
+
+            var sb = new StringBuilder();
+            sb.AppendLine("");
+            sb.AppendLine("=== DependencyContainer Registered Classes ===");
+            sb.AppendLine($"Total registered types: {boundInstances.Count}");
+            sb.AppendLine("");
+
+            var sortedTypes = boundInstances.OrderBy(kvp => kvp.Key.FullName).ToList();
+
+            foreach (var kvp in sortedTypes)
+            {
+                Type resolveType = kvp.Key;
+                //object instance = kvp.Value;
+                //Type instanceType = instance?.GetType();
+
+                //string instanceTypeStr = instanceType != null ? instanceType.FullName : "null";
+                sb.AppendLine($"{resolveType.FullName}");
+                //sb.AppendLine($"  [{resolveType.FullName}]");
+                //sb.AppendLine($"    -> Instance: {instanceTypeStr}");
+            }
+
+            sb.AppendLine("");
+            sb.AppendLine("=== End of DependencyContainer Classes ===");
+
+            _logger?.Info.Log(sb.ToString());
         }
     }
 }

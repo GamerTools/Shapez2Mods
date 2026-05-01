@@ -10,11 +10,12 @@
   "Assemblies": [
     "TestMod.dll"
   ],
-  "_Dependencies": [
+  "Dependencies": [
     {
-      "ModId": "steam:3542611357",
-      "ModTitle": "Shapez Shifter",
-      "Version": "1.0.*"
+        "ModId": "local:ShapezShifter",
+        "_ModId": "steam:3542611357",
+        "ModTitle": "Shapez Shifter",
+        "Version": "1.0.*"
     }
   ]
 }

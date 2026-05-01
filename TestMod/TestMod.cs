@@ -1,9 +1,14 @@
-﻿using Game.Core.Trains;
+﻿using Core.Dependency;
+using Cysharp.Threading.Tasks;
+using Game.Content.Features.Trains.Predictions;
 using Game.Core.Coordinates;
+using Game.Core.Trains;
+using Game.Orchestration;
 using JetBrains.Annotations;
 using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Hijack;
+using ShapezShifter.Kit;
 using ShapezShifter.SharpDetour;
 using ShapezShifter.Utilities;
 using System;
@@ -12,16 +17,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Unity.Mathematics;
 using static ShapezShifter.Flow.ModConsoleCommandsCreator;
-
 using ILogger = Core.Logging.ILogger;
-using Game.Content.Features.Trains.Predictions;
-using ShapezShifter.Kit;
 
 [UsedImplicitly]
 public class MyMod : IMod
 {
     public static ILogger logger;
-    private Hook SIPRHook;
     private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
 
     public MyMod(ILogger logger)
@@ -36,7 +37,10 @@ public class MyMod : IMod
         consoleRewirer = this.AddModCommands();
         AddConsoleCommands();
 
-        //CreateHooks();
+        CreateHooks();
+
+        //Savegame s1 = GameHelper.Core.Savegame;
+        //var v1 = GameHelper.Core.LocalPlayer.CurrentMap;
     }
 
     public void AddConsoleCommands()
@@ -51,42 +55,75 @@ public class MyMod : IMod
             {
                 context.Output($"Layers: {GameHelper.Core.Mode.Scenario.ResearchConfig.MaxShapeLayers}");
                 context.Output($"Parts: {GameHelper.Core.Mode.ShapesConfiguration.PartCount}");
+                var savegameManager = GameDependencyContainer.Resolve<ISavegameManager>();
+                //var gameSessionOrchestrator = dependencyContainer.Resolve<GameSessionOrchestrator>();
             });
 
-            // Example: Display class members recursively
             console.Register("inspect", context =>
             {
-                //var core = GameHelper.Core;
-                //context.Output("Inspecting SandboxItemProducerSimulationRenderer...");
                 context.Output("Inspecting GameHelper...");
                 ClassInspector.DisplayClassMembers(typeof(GameHelper), null, maxDepth: 3);
                 context.Output("Inspection complete. Check logs for details.");
             });
 
-            // Example: Inspect an instance with values
+            console.Register("allglobal", context =>
+            {
+                context.Output("Inspecting globals...");
+                ClassInspector.DisplayClassMembers(typeof(GlobalsData), globals, maxDepth: 3);
+                context.Output("Inspection complete. Check logs for details.");
+            });
+
             console.Register("inspectmod", context =>
             {
                 context.Output("Inspecting MyMod instance...");
                 ClassInspector.DisplayClassMembers(typeof(MyMod), this, maxDepth: 1);
                 context.Output("Inspection complete. Check logs for details.");
             });
+
+            console.Register("listdeps", context =>
+            {
+                context.Output("Listing DependencyContainer classes...");
+                ClassInspector.LogDependencyContainerClasses(GameDependencyContainer);
+                ClassInspector.LogDependencyContainerClasses(SessionDependencyContainer);
+                context.Output("Listing complete. Check logs for details.");
+            });
         });
     }
 
+    private Hook GameInitHook;
+    private Hook SessionInitHook;
+    private GlobalsData globals;
+    private DependencyContainer GameDependencyContainer;
+    private DependencyContainer SessionDependencyContainer;
+
     public void CreateHooks()
     {
-        BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
-
         MyMod.logger.Info.Log("##### Making Hooks");
 
-        SIPRHook = new Hook(
-            typeof(SandboxItemProducerSimulationRenderer).GetMethod("OnDrawDynamic", FLAGS),
-            typeof(MyMod).GetMethod("OnDrawDynamic", FLAGS));
+        GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
+            original: orchestrator => orchestrator.InitializeMainMenu(),
+            postfix: GetGameData);
+        SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
+            original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
+            postfix: GetSessionData);
+    }
+
+    private UniTask GetGameData(GameOrchestrator orchestrator, UniTask result)
+    {
+        this.GameDependencyContainer = orchestrator.InitializationDependencyContainer;
+        return result;
+    }
+
+    private void GetSessionData(GameSessionOrchestrator orchestrator, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
+    {
+        this.globals = globals;
+        this.SessionDependencyContainer = orchestrator.DependencyContainer;
     }
 
     public void Dispose()
     {
-        SIPRHook?.Dispose();
+        GameInitHook?.Dispose();
+        SessionInitHook?.Dispose();
         consoleRewirer?.Dispose();
     }
 }
