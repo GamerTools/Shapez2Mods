@@ -31,3 +31,9 @@ Cleared the web cache in the browser and Steam app, and now able to see the work
 
 Command to publish the mod...
 # steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/base.vdf" +quit;
+
+The item is not appearing in the Shop.
+
+This works...
+<enable cheats>
+research.set CBCornerCutter 1

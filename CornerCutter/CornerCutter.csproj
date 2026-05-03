@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <OutputPath>$(SPZ2_PERSISTENT)\mods\CornerCutter</OutputPath>
+        <OutputPath>$(SPZ2_PERSISTENT)\mods\Corner Cutter</OutputPath>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
 
@@ -21,8 +21,8 @@
 
     <ItemGroup>
         <Reference Include="ShapezShifter">
-            <HintPath>$(SPZ2_SHIFTER)</HintPath>
-            <Private>False</Private>
+			<HintPath>$(SPZ2_PERSISTENT)\mods\ShapezShifter\ShapezShifter.dll</HintPath>
+			<Private>False</Private>
         </Reference>
 
         <Reference Include="SPZGameAssembly">

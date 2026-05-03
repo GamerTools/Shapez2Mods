@@ -76,7 +76,7 @@ public class CornerCuttersMod : IMod
     private SideUpgradePresentationData CreateSideUpgradePresentationData(string titleId, string titleDescription)
     {
         return new SideUpgradePresentationData(
-            new ResearchUpgradeId("Patience"),
+            new ResearchUpgradeId("CBCornerCutter"),
             GameImageId.Empty,
             GameVideoId.Empty,
             titleId.T(),
