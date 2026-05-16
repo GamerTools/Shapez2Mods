@@ -1,6 +1,6 @@
 {
   "$schema": "https://shapez2.raphdf201.net/assets/manifestSchema.json",
-  "Version": "0.1.0",
+  "Version": "0.1.1",
   "Description": "S1 Rules",
   "Author": "FatcatX",
   "SavedModVersionCompabilityRangeWithSelf": "0.1.*",
@@ -12,14 +12,8 @@
   ],
   "Dependencies": [
     {
-        "_ModId": "steam:3542712030",
-        "ModId": "local:MonoMod.RuntimeDetour",
-        "ModTitle": "MonoMod.RuntimeDetour",
-        "Version": "^25.2.3"
-    },
-    {
-      "_ModId": "steam:3542611357",
-      "ModId": "local:ShapezShifter",
+      "ModId": "steam:3542611357",
+      "_ModId": "local:ShapezShifter",
       "ModTitle": "Shapez Shifter",
       "Version": "^1.0.0"
     }
