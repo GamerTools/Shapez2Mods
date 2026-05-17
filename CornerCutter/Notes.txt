@@ -37,3 +37,10 @@ The item is not appearing in the Shop.
 This works...
 <enable cheats>
 research.set CBCornerCutter 1
+
+Destroys a corner part of a shape.
+
+This new machine can be unlocked by using the commands in the game Console:
+* enable cheats (see the wiki if you don't know how)
+* research.set CBCornerCutter 1
+
