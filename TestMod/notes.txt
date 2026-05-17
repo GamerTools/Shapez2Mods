@@ -27,4 +27,25 @@ I did not get this to work.  I used this instead...
 Looking for trains...
 TrainIslandCollection Mode.GameIslands.Trains
 
+Looking for keybindings to figure out how camera is controlled...
+
+PlayerInteractionOrchestrator
+             CameraController = new CameraController(cameraSettings, viewport, debugConsole, keybindings, logger);
+
+- CameraControler has both cameraSettings and keybindings
+        DebugConsole.Register("camera.move-to", new DebugConsole.IntOption("x"), new DebugConsole.IntOption("y"), delegate (DebugConsole.CommandContext ctx)
+        {
+            Viewport.Position = (CurrentPosition = new float2(ctx.GetInt(0), ctx.GetInt(1)));
+        });
+- looks like it sets CurrentPosition.
+
+        DebugConsole.Register("camera.info", delegate (DebugConsole.CommandContext ctx)
+        {
+            Camera mainCamera = Viewport.MainCamera;
+            ctx.Output("Camera pos = " + mainCamera.transform.position.ToString() + " rotation = " + mainCamera.transform.eulerAngles.ToString() + " viewport = \nZOOM:" + Viewport.Zoom + "\nANGLE:" + Viewport.Angle + "\nHEIGHT:" + Viewport.Height + "\nROT:" + Viewport.RotationDegrees + "\nPOS: " + Viewport.Position.ToString());
+            Logger.Debug?.Log("Camera pos = " + mainCamera.transform.position.ToString() + " rotation = " + mainCamera.transform.rotation.eulerAngles.ToString());
+        });
+
+- PlayerInteractionOrchestrator creates CameraController and other things.
+
 
