@@ -16,9 +16,8 @@ namespace ReverseBelts
 
         private Hook GameInitHook;
         private Hook SessionInitHook;
-        private Hook CameraHook;
         private Hook BuildingsHook;
-        private GameObject inputHandlerObject;
+        private readonly GameObject inputHandlerObject;
 
         public Main(Core.Logging.ILogger logger)
         {
@@ -43,9 +42,6 @@ namespace ReverseBelts
             SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
                 original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
                 postfix: GetSessionData);
-            CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
-                original: (orchestrator, gameData, cameraSettings, keybindings) => orchestrator.Init_6_PlayerInteraction(gameData, cameraSettings, keybindings),
-                postfix: BindCamera);
             BuildingsHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, BuildingsModulesLookup>(
                 original: (orchestrator, modules) => orchestrator.InjectBuildingsModuleProviders(modules),
                 postfix: BindBuildings);
@@ -61,10 +57,6 @@ namespace ReverseBelts
             Globals = globals;
             SessionDependencyContainer = self.DependencyContainer;
         }
-        private void BindCamera(GameSessionOrchestrator self, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
-        {
-            self.DependencyContainer.Bind<CameraController>().To(self.PlayerInteractionOrchestrator.CameraController);
-        }
         private void BindBuildings(GameSessionOrchestrator self, BuildingsModulesLookup buildingsModulesLookup)
         {
             self.DependencyContainer.Bind<BuildingsModulesLookup>().To(buildingsModulesLookup);
@@ -74,7 +66,6 @@ namespace ReverseBelts
         {
             GameInitHook?.Dispose();
             SessionInitHook?.Dispose();
-            CameraHook?.Dispose();
             BuildingsHook?.Dispose();
             if (inputHandlerObject != null)
             {

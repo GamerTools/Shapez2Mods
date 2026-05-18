@@ -125,7 +125,6 @@ Old Lift2DownBackwardInternalVariant(254)@(GlobalTileCoordinate(947, 54, 2);NoRo
 
 -----
 
-
 Reverse Belts[0.1.0] DELETED BeltPortSenderInternalVariant(701)@(GlobalTileCoordinate(926, 67, 0);NoRotate)
 Reverse Belts[0.1.0] DELETED BeltPortSenderInternalVariant(713)@(GlobalTileCoordinate(926, 68, 0);NoRotate)
 Reverse Belts[0.1.0] DELETED BeltPortSenderInternalVariant(700)@(GlobalTileCoordinate(926, 69, 0);NoRotate)
@@ -196,11 +195,12 @@ Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(532)@(GlobalTileCoordinate(9
 Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(568)@(GlobalTileCoordinate(933, 69, 0);RotateCCW)
 
 TODO
-- Fix belt lifts - change floors
+- Fix belt lifts - change floors - done
 - Add belt launchers - done
-- Add Belt filters and readers
+- Add Belt filters and readers - done
 - Add Overflow splitters - done
-- Add cutters and swappers
+- Add cutters and swappers - done
+- Add painters - done
 - Use Keybindings
 - Add pipe launchers and gates?
 
@@ -228,3 +228,15 @@ Reverse Belts[0.1.0] Unk RotatorHalfInternalVariant(331)@(GlobalTileCoordinate(9
 Reverse Belts[0.1.0] Unk CutterHalfInternalVariant(3571)@(GlobalTileCoordinate(924, 64, 0);NoRotate)
 Reverse Belts[0.1.0] Unk CutterDefaultInternalVariant(3572)@(GlobalTileCoordinate(925, 64, 0);NoRotate)
 Reverse Belts[0.1.0] Unk HalvesSwapperDefaultInternalVariant(3574)@(GlobalTileCoordinate(926, 64, 0);NoRotate)
+
+-----
+
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariant(2745)@(GlobalTileCoordinate(920, 70, 0);RotateCCW)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariant(2746)@(GlobalTileCoordinate(922, 68, 0);NoRotate)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariant(2748)@(GlobalTileCoordinate(922, 72, 0);Rotate180)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariant(2747)@(GlobalTileCoordinate(924, 70, 0);RotateCW)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2751)@(GlobalTileCoordinate(926, 70, 0);RotateCW)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2750)@(GlobalTileCoordinate(928, 68, 0);Rotate180)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2749)@(GlobalTileCoordinate(928, 72, 0);NoRotate)
+Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2752)@(GlobalTileCoordinate(930, 70, 0);RotateCCW)
+

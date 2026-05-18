@@ -152,12 +152,22 @@ namespace ReverseBelts
                 case "BeltReaderDefaultInternalVariantMirrored":
                     buildings.TryGetValue(new BuildingDefinitionId("BeltReaderDefaultInternalVariant"), out definition);
                     break;
+                case "RotatorOneQuadInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("RotatorOneQuadCCWInternalVariant"), out definition);
+                    break;
+                case "RotatorOneQuadCCWInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("RotatorOneQuadInternalVariant"), out definition);
+                    break;
                 case "CutterDefaultInternalVariant":
                 case "CutterDefaultInternalVariantMirrored":
                     buildings.TryGetValue(new BuildingDefinitionId("HalvesSwapperDefaultInternalVariant"), out definition);
                     break;
-                case "RotatorOneQuadInternalVariant":
-                case "RotatorOneQuadCCWInternalVariant":
+                case "PainterDefaultInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("PainterDefaultInternalVariantMirrored"), out definition);
+                    break;
+                case "PainterDefaultInternalVariantMirrored":
+                    buildings.TryGetValue(new BuildingDefinitionId("PainterDefaultInternalVariant"), out definition);
+                    break;
                 case "RotatorHalfInternalVariant":
                 case "CutterHalfInternalVariant":
                 case "HalvesSwapperDefaultInternalVariant":
@@ -171,7 +181,7 @@ namespace ReverseBelts
 
         private void getNewTransform(BuildingModel building, out GlobalTileTransform transform)
         {
-            // set the position - only needed for belt lifts
+            // set the position - only needed for belt lifts and to adjust cutters
             TileVector offset;
             switch (building.Definition.Id.Name)
             {

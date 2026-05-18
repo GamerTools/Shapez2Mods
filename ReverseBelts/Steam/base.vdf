@@ -6,5 +6,12 @@
 	"previewfile"		"/mnt/c/Users/garre/Projects/Shapez2Mods/ReverseBelts/Steam/preview1.png"
 	"visibility"		"0"
 	"title"		"Reverse Belts"
-	"description"		"Reverses the direction of belts"
+	"description" "
+Reverses the direction of belts.  Also reverses rotators and cutters.
+Machines that cannot be reversed, like the stacker, remain unchanged.
+
+How to use
+- Make a selection
+- Press 'r' to reverse
+"
 }
