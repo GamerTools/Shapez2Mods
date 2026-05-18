@@ -1,9 +1,5 @@
 using Game.Core.Coordinates;
-using Game.Placement.Connectors;
-using ShapezShifter.Flow;
 using ShapezShifter.Kit;
-using System;
-using System.Linq;
 using System.Text;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
