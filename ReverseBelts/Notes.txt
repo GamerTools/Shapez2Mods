@@ -159,8 +159,72 @@ Reverse Belts[0.1.0] DELETED SplitterOverflowLInternalVariantMirrored(723)@(Glob
 Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(708)@(GlobalTileCoordinate(941, 73, 0);RotateCW)
 Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(731)@(GlobalTileCoordinate(941, 73, 0);RotateCCW)
 
+-----
+
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariant(512)@(GlobalTileCoordinate(923, 64, 0);RotateCCW)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariantMirrored(517)@(GlobalTileCoordinate(923, 69, 0);RotateCW)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariant(509)@(GlobalTileCoordinate(924, 63, 0);NoRotate)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariant(511)@(GlobalTileCoordinate(924, 65, 0);Rotate180)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariantMirrored(520)@(GlobalTileCoordinate(924, 68, 0);Rotate180)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariantMirrored(519)@(GlobalTileCoordinate(924, 70, 0);NoRotate)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariant(510)@(GlobalTileCoordinate(925, 64, 0);RotateCW)
+Reverse Belts[0.1.0] DELETED BeltReaderDefaultInternalVariantMirrored(518)@(GlobalTileCoordinate(925, 69, 0);RotateCCW)
+
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariant(524)@(GlobalTileCoordinate(927, 64, 0);RotateCCW)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariantMirrored(529)@(GlobalTileCoordinate(927, 69, 0);RotateCW)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariant(561)@(GlobalTileCoordinate(927, 69, 0);RotateCCW)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariant(521)@(GlobalTileCoordinate(928, 63, 0);NoRotate)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariant(523)@(GlobalTileCoordinate(928, 65, 0);Rotate180)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariantMirrored(534)@(GlobalTileCoordinate(928, 68, 0);Rotate180)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariant(562)@(GlobalTileCoordinate(928, 68, 0);NoRotate)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariantMirrored(533)@(GlobalTileCoordinate(928, 70, 0);NoRotate)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariant(563)@(GlobalTileCoordinate(928, 70, 0);Rotate180)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariant(522)@(GlobalTileCoordinate(929, 64, 0);RotateCW)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariantMirrored(530)@(GlobalTileCoordinate(929, 69, 0);RotateCCW)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariant(564)@(GlobalTileCoordinate(929, 69, 0);RotateCW)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariantMirrored(527)@(GlobalTileCoordinate(931, 64, 0);RotateCW)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(531)@(GlobalTileCoordinate(931, 69, 0);RotateCCW)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(565)@(GlobalTileCoordinate(931, 69, 0);RotateCW)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariantMirrored(526)@(GlobalTileCoordinate(932, 63, 0);Rotate180)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariantMirrored(525)@(GlobalTileCoordinate(932, 65, 0);NoRotate)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(536)@(GlobalTileCoordinate(932, 68, 0);NoRotate)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(566)@(GlobalTileCoordinate(932, 68, 0);Rotate180)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(535)@(GlobalTileCoordinate(932, 70, 0);Rotate180)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(567)@(GlobalTileCoordinate(932, 70, 0);NoRotate)
+Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariantMirrored(528)@(GlobalTileCoordinate(933, 64, 0);RotateCCW)
+Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(532)@(GlobalTileCoordinate(933, 69, 0);RotateCW)
+Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(568)@(GlobalTileCoordinate(933, 69, 0);RotateCCW)
+
 TODO
 - Fix belt lifts - change floors
-- Add launchers
-- Add Belt filters and Overflow splitters
+- Add belt launchers - done
+- Add Belt filters and readers
+- Add Overflow splitters - done
 - Add cutters and swappers
+- Use Keybindings
+- Add pipe launchers and gates?
+
+Reverse Belts[0.1.0] DEBUG before (GlobalTileCoordinate(917, 62, 1);NoRotate)
+Reverse Belts[0.1.0] DEBUG after (GlobalTileCoordinate(917, 62, 1);Rotate180)
+Reverse Belts[0.1.0] Old Lift1DownForwardInternalVariant(263)@(GlobalTileCoordinate(917, 62, 1);NoRotate)
+Reverse Belts[0.1.0] New Lift1UpForwardInternalVariant(265)@(GlobalTileCoordinate(917, 62, 1);Rotate180)
+Reverse Belts[0.1.0] DEBUG before (GlobalTileCoordinate(918, 61, 1);RotateCW)
+Reverse Belts[0.1.0] DEBUG after (GlobalTileCoordinate(918, 61, 1);RotateCCW)
+Reverse Belts[0.1.0] Old Lift1DownForwardInternalVariant(262)@(GlobalTileCoordinate(918, 61, 1);RotateCW)
+Reverse Belts[0.1.0] New Lift1UpForwardInternalVariant(266)@(GlobalTileCoordinate(918, 61, 1);RotateCCW)
+Reverse Belts[0.1.0] DEBUG before (GlobalTileCoordinate(918, 63, 1);RotateCCW)
+Reverse Belts[0.1.0] DEBUG after (GlobalTileCoordinate(918, 63, 1);RotateCW)
+Reverse Belts[0.1.0] Old Lift1DownForwardInternalVariant(261)@(GlobalTileCoordinate(918, 63, 1);RotateCCW)
+Reverse Belts[0.1.0] New Lift1UpForwardInternalVariant(267)@(GlobalTileCoordinate(918, 63, 1);RotateCW)
+Reverse Belts[0.1.0] DEBUG before (GlobalTileCoordinate(919, 62, 1);Rotate180)
+Reverse Belts[0.1.0] DEBUG after (GlobalTileCoordinate(919, 62, 1);NoRotate)
+Reverse Belts[0.1.0] Old Lift1DownForwardInternalVariant(264)@(GlobalTileCoordinate(919, 62, 1);Rotate180)
+Reverse Belts[0.1.0] New Lift1UpForwardInternalVariant(268)@(GlobalTileCoordinate(919, 62, 1);NoRotate)
+
+Reverse Belts[0.1.0] Unk RotatorOneQuadInternalVariant(329)@(GlobalTileCoordinate(925, 64, 0);Rotate180)
+Reverse Belts[0.1.0] Unk RotatorOneQuadCCWInternalVariant(330)@(GlobalTileCoordinate(926, 64, 0);Rotate180)
+Reverse Belts[0.1.0] Unk RotatorHalfInternalVariant(331)@(GlobalTileCoordinate(927, 64, 0);Rotate180)
+
+Reverse Belts[0.1.0] Unk CutterHalfInternalVariant(3571)@(GlobalTileCoordinate(924, 64, 0);NoRotate)
+Reverse Belts[0.1.0] Unk CutterDefaultInternalVariant(3572)@(GlobalTileCoordinate(925, 64, 0);NoRotate)
+Reverse Belts[0.1.0] Unk HalvesSwapperDefaultInternalVariant(3574)@(GlobalTileCoordinate(926, 64, 0);NoRotate)

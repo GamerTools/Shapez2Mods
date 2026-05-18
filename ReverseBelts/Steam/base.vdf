@@ -1,10 +1,10 @@
 "workshopitem"
 {
-    "appid" "2162800"
-    "publishedfileid" "0"
+	"appid"		"2162800"
+	"publishedfileid"		"3728340570"
 	"contentfolder"		"/mnt/c/Users/garre/AppData/LocalLow/tobspr Games/shapez 2/mods/Reverse Belts"
-	"previewfile"		"/mnt/c/Users/garre/Projects/Shapez2Mods/ReverseBelts/Steam/Logo1.png"
-    "visibility" "0"
-    "title" "Reverse Belts"
-    "description" "Reverses the direction of belts"
+	"previewfile"		"/mnt/c/Users/garre/Projects/Shapez2Mods/ReverseBelts/Steam/preview1.png"
+	"visibility"		"0"
+	"title"		"Reverse Belts"
+	"description"		"Reverses the direction of belts"
 }

@@ -1,4 +1,5 @@
 using Game.Core.Coordinates;
+using ShapezShifter.Flow;
 using ShapezShifter.Kit;
 using System.Text;
 using UnityEngine;
@@ -35,16 +36,16 @@ namespace ReverseBelts
                 getNewTransform(building, out var transform);
 
                 string oldBldg = building.ToString();
-                map.DeleteBuilding(building.Id);
                 if (definition != null)
                 {
-                    var newbuilding = map.CreateBuilding(definition, transform, config);
+                    map.DeleteBuilding(building.Id);
+                    var newBldg = map.CreateBuilding(definition, transform, config);
                     _logger?.Info.Log($"Old {oldBldg}");
-                    _logger?.Info.Log($"New {newbuilding}");
+                    _logger?.Info.Log($"New {newBldg}");
                 }
                 else
                 {
-                    _logger?.Info.Log($"DELETED {oldBldg}");
+                    _logger?.Info.Log($"Unk {oldBldg}");
                 }
             }
             buildingSelection.Clear();
@@ -64,12 +65,16 @@ namespace ReverseBelts
                     buildings.TryGetValue(new BuildingDefinitionId("BeltDefaultLeftInternalVariantMirrored"), out definition);
                     break;
                 case "Splitter1To2LInternalVariant":
+                case "SplitterOverflowLInternalVariant":
+                case "BeltFilterDefaultInternalVariant":
                     buildings.TryGetValue(new BuildingDefinitionId("Merger2To1LInternalVariantMirrored"), out definition);
                     break;
                 case "Merger2To1LInternalVariantMirrored":
                     buildings.TryGetValue(new BuildingDefinitionId("Splitter1To2LInternalVariant"), out definition);
                     break;
                 case "Splitter1To2LInternalVariantMirrored":
+                case "SplitterOverflowLInternalVariantMirrored":
+                case "BeltFilterDefaultInternalVariantMirrored":
                     buildings.TryGetValue(new BuildingDefinitionId("Merger2To1LInternalVariant"), out definition);
                     break;
                 case "Merger2To1LInternalVariant":
@@ -135,15 +140,95 @@ namespace ReverseBelts
                 case "Lift2DownBackwardInternalVariant":
                     buildings.TryGetValue(new BuildingDefinitionId("Lift2UpBackwardInternalVariant"), out definition);
                     break;
+                case "BeltPortSenderInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("BeltPortReceiverInternalVariant"), out definition);
+                    break;
+                case "BeltPortReceiverInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("BeltPortSenderInternalVariant"), out definition);
+                    break;
+                case "BeltReaderDefaultInternalVariant":
+                    buildings.TryGetValue(new BuildingDefinitionId("BeltReaderDefaultInternalVariantMirrored"), out definition);
+                    break;
+                case "BeltReaderDefaultInternalVariantMirrored":
+                    buildings.TryGetValue(new BuildingDefinitionId("BeltReaderDefaultInternalVariant"), out definition);
+                    break;
+                case "CutterDefaultInternalVariant":
+                case "CutterDefaultInternalVariantMirrored":
+                    buildings.TryGetValue(new BuildingDefinitionId("HalvesSwapperDefaultInternalVariant"), out definition);
+                    break;
+                case "RotatorOneQuadInternalVariant":
+                case "RotatorOneQuadCCWInternalVariant":
+                case "RotatorHalfInternalVariant":
+                case "CutterHalfInternalVariant":
+                case "HalvesSwapperDefaultInternalVariant":
+                    definition = building.Definition;
+                    break;
                 default:
                     definition = null;
-                    //_logger?.Info.Log($"Unsupported building type: {definition.Name}");
                     break;
             }
         }
 
         private void getNewTransform(BuildingModel building, out GlobalTileTransform transform)
         {
+            // set the position - only needed for belt lifts
+            TileVector offset;
+            switch (building.Definition.Id.Name)
+            {
+                case "Lift1UpForwardInternalVariant":
+                case "Lift1UpLeftInternalVariant":
+                case "Lift1UpLeftInternalVariantMirrored":
+                case "Lift1UpBackwardInternalVariant":
+                    offset = TileVector.Up;
+                    break;
+                case "Lift1DownForwardInternalVariant":
+                case "Lift1DownLeftInternalVariant":
+                case "Lift1DownLeftInternalVariantMirrored":
+                case "Lift1DownBackwardInternalVariant":
+                    offset = TileVector.Down;
+                    break;
+                case "Lift2UpForwardInternalVariant":
+                case "Lift2UpLeftInternalVariant":
+                case "Lift2UpLeftInternalVariantMirrored":
+                case "Lift2UpBackwardInternalVariant":
+                    offset = new TileVector(0, 0, 2);
+                    break;
+                case "Lift2DownForwardInternalVariant":
+                case "Lift2DownLeftInternalVariantMirrored":
+                case "Lift2DownLeftInternalVariant":
+                case "Lift2DownBackwardInternalVariant":
+                    offset = new TileVector(0, 0, -2);
+                    break;
+                case "CutterDefaultInternalVariant":
+                case "HalvesSwapperDefaultInternalVariant":
+                    int x = 0;
+                    int y = 0;
+                    switch (building.Transform.Rotation.Value)
+                    {
+                        case GridRotation.Serializable.NoRotate:
+                            y = -1;
+                            break;
+                        case GridRotation.Serializable.RotateCW:
+                            x = 1;
+                            break;
+                        case GridRotation.Serializable.Rotate180:
+                            y = 1;
+                            break;
+                        case GridRotation.Serializable.RotateCCW:
+                            x = -1;
+                            break;
+                        default:
+                            break;
+                    }
+                    offset = new TileVector(x, y, 0);
+                    break;
+                default:
+                    offset = TileVector.Zero;
+                    break;
+            }
+            transform = building.Transform + offset;
+
+            // Set the rotation
             switch (building.Definition.Id.Name)
             {
                 case "BeltDefaultLeftInternalVariantMirrored":
@@ -151,23 +236,23 @@ namespace ReverseBelts
                 case "Lift1UpLeftInternalVariantMirrored":
                 case "Lift2DownLeftInternalVariantMirrored":
                 case "Lift2UpLeftInternalVariantMirrored":
-                    transform = building.Transform.Rotate(GridRotation.RotateCCW);
+                    transform = transform.Rotate(GridRotation.RotateCCW);
                     break;
                 case "BeltDefaultLeftInternalVariant":
                 case "Lift1UpLeftInternalVariant":
                 case "Lift1DownLeftInternalVariant":
                 case "Lift2UpLeftInternalVariant":
                 case "Lift2DownLeftInternalVariant":
-                    transform = building.Transform.Rotate(GridRotation.RotateCW);
+                    transform = transform.Rotate(GridRotation.RotateCW);
                     break;
                 case "Lift1UpBackwardInternalVariant":
                 case "Lift1DownBackwardInternalVariant":
                 case "Lift2UpBackwardInternalVariant":
                 case "Lift2DownBackwardInternalVariant":
-                    transform = building.Transform;
+                    // No rotation needed
                     break;
                 default:
-                    transform = building.Transform.Rotate(GridRotation.Rotate180);
+                    transform = transform.Rotate(GridRotation.Rotate180);
                     break;
             }
         }
