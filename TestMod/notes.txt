@@ -48,4 +48,135 @@ PlayerInteractionOrchestrator
 
 - PlayerInteractionOrchestrator creates CameraController and other things.
 
+- BlueprintStarter has...
+AllBuildings = mode.Buildings.All;
+AllIslands = mode.Islands.AllDefinitions;
 
+- BuildingSelectionUtils seems to be where the find all connected buildings is done.
+such as FindForwardConnectedBuildings().
+- What calls that?
+- PlayerInteractionStateManager has...
+    public Selection<BuildingModel> _BuildingSelection = new Selection<BuildingModel>();
+    public ISelection<BuildingModel> BuildingSelection => _BuildingSelection;
+- I think this is the building selection.  How to access that?
+
+- DefaultKeybindings has the keybindings.
+
+ new KeybindingsLayer("mass-selection", (IReadOnlyCollection<Keybinding>)(object)new Keybinding[15]
+            {
+                new Keybinding("select-base", new KeySet(KeyCode.Mouse0)),
+                new Keybinding("select-single-modifier", new KeySet(DefaultControlKeyCode), null, blockableByUI: true, systemDefined: false, 0.001f, "mass-selection.select-base"),
+                new Keybinding("select-area-modifier", new KeySet(KeyCode.LeftShift), null, blockableByUI: true, systemDefined: false, 0.001f, "mass-selection.select-base"),
+                new Keybinding("deselect-area-modifier", new KeySet(KeyCode.LeftAlt), null, blockableByUI: true, systemDefined: false, 0.001f, "mass-selection.select-base"),
+                new Keybinding("delete", new KeySet(KeyCode.X), new KeySet(KeyCode.Delete)),
+                ...
+
+- I would like the to add a new keybinding to "mass-selection", such as "R" for "reverse belts".
+- I want my class to to be called each update.  It will check the inputs to see if the key was pressed, and then perform the action.
+
+- The direct keypress worked...
+TestMod[0.0.1] Total selected buildings: 4
+TestMod[0.0.1] Building #1:
+  Type: BuildingModel
+  Full Type: BuildingModel
+  Definition: BuildingDefinition
+  Definition ID: BeltDefaultForwardInternalVariant
+...
+
+BuildingModel has this...
+        return $"{Definition.Id}({Id})@{Transform}";
+
+TestMod[0.0.1] Building #1 BeltDefaultForwardInternalVariant(283)@(GlobalTileCoordinate(-22, 26, 0);RotateCCW)  up
+TestMod[0.0.1] Building #2 BeltDefaultForwardInternalVariant(259)@(GlobalTileCoordinate(-21, 25, 0);NoRotate)   right
+TestMod[0.0.1] Building #3 BeltDefaultForwardInternalVariant(304)@(GlobalTileCoordinate(-21, 27, 0);Rotate180)  left
+TestMod[0.0.1] Building #4 BeltDefaultForwardInternalVariant(284)@(GlobalTileCoordinate(-20, 26, 0);RotateCW)   down
+
+  right
+up     down
+  left
+
+So #1 is up, #2 is right, #3 is left, and #4 is down.
+
+- The Ids are different and the Transforms are different.
+- Ids don't matter, they are just unique identifiers for the building instances.
+
+TestMod[0.0.1] === Selected Buildings ===
+TestMod[0.0.1] Total selected buildings: 24
+TestMod[0.0.1] Building #1 BeltDefaultForwardInternalVariant(283)@(GlobalTileCoordinate(-22, 26, 0);RotateCCW)
+TestMod[0.0.1] Building #2 BeltDefaultForwardInternalVariant(259)@(GlobalTileCoordinate(-21, 25, 0);NoRotate)
+TestMod[0.0.1] Building #3 BeltDefaultForwardInternalVariant(304)@(GlobalTileCoordinate(-21, 27, 0);Rotate180)
+TestMod[0.0.1] Building #4 BeltDefaultForwardInternalVariant(284)@(GlobalTileCoordinate(-20, 26, 0);RotateCW)
+TestMod[0.0.1] Building #5 BeltDefaultLeftInternalVariantMirrored(263)@(GlobalTileCoordinate(-18, 25, 0);RotateCCW)
+TestMod[0.0.1] Building #6 BeltDefaultLeftInternalVariantMirrored(260)@(GlobalTileCoordinate(-18, 27, 0);Rotate180)
+TestMod[0.0.1] Building #7 BeltDefaultLeftInternalVariantMirrored(266)@(GlobalTileCoordinate(-16, 25, 0);NoRotate)
+TestMod[0.0.1] Building #8 BeltDefaultLeftInternalVariantMirrored(264)@(GlobalTileCoordinate(-16, 27, 0);RotateCW)
+TestMod[0.0.1] Building #9 Splitter1To2LInternalVariant(287)@(GlobalTileCoordinate(-14, 26, 0);RotateCCW)
+TestMod[0.0.1] Building #10 Splitter1To2LInternalVariant(269)@(GlobalTileCoordinate(-13, 25, 0);NoRotate)
+TestMod[0.0.1] Building #11 Splitter1To2LInternalVariant(267)@(GlobalTileCoordinate(-13, 27, 0);Rotate180)
+TestMod[0.0.1] Building #12 Splitter1To2LInternalVariant(289)@(GlobalTileCoordinate(-12, 26, 0);RotateCW)
+TestMod[0.0.1] Building #13 Splitter1To2LInternalVariantMirrored(291)@(GlobalTileCoordinate(-10, 26, 0);RotateCW)
+TestMod[0.0.1] Building #14 Splitter1To2LInternalVariantMirrored(273)@(GlobalTileCoordinate(-9, 25, 0);Rotate180)
+TestMod[0.0.1] Building #15 Splitter1To2LInternalVariantMirrored(271)@(GlobalTileCoordinate(-9, 27, 0);NoRotate)
+TestMod[0.0.1] Building #16 Splitter1To2LInternalVariantMirrored(293)@(GlobalTileCoordinate(-8, 26, 0);RotateCCW)
+TestMod[0.0.1] Building #17 SplitterTShapeInternalVariant(295)@(GlobalTileCoordinate(-6, 26, 0);Rotate180)
+TestMod[0.0.1] Building #18 SplitterTShapeInternalVariant(277)@(GlobalTileCoordinate(-5, 25, 0);RotateCCW)
+TestMod[0.0.1] Building #19 SplitterTShapeInternalVariant(275)@(GlobalTileCoordinate(-5, 27, 0);RotateCW)
+TestMod[0.0.1] Building #20 SplitterTShapeInternalVariant(297)@(GlobalTileCoordinate(-4, 26, 0);NoRotate)
+TestMod[0.0.1] Building #21 Splitter1To3InternalVariant(299)@(GlobalTileCoordinate(-2, 26, 0);NoRotate)
+TestMod[0.0.1] Building #22 Splitter1To3InternalVariant(280)@(GlobalTileCoordinate(-1, 25, 0);RotateCW)
+TestMod[0.0.1] Building #23 Splitter1To3InternalVariant(279)@(GlobalTileCoordinate(-1, 27, 0);RotateCCW)
+TestMod[0.0.1] Building #24 Splitter1To3InternalVariant(300)@(GlobalTileCoordinate(0, 26, 0);Rotate180)
+TestMod[0.0.1] === End of Selected Buildings ===
+
+TestMod[0.0.1] === Selected Buildings ===
+TestMod[0.0.1] Total selected buildings: 24
+TestMod[0.0.1] Building #1 BeltDefaultForwardInternalVariant(327)@(GlobalTileCoordinate(-22, 31, 0);RotateCW)
+TestMod[0.0.1] Building #2 BeltDefaultForwardInternalVariant(314)@(GlobalTileCoordinate(-21, 30, 0);Rotate180)
+TestMod[0.0.1] Building #3 BeltDefaultForwardInternalVariant(313)@(GlobalTileCoordinate(-21, 32, 0);NoRotate)
+TestMod[0.0.1] Building #4 BeltDefaultForwardInternalVariant(328)@(GlobalTileCoordinate(-20, 31, 0);RotateCCW)
+TestMod[0.0.1] Building #5 BeltDefaultLeftInternalVariant(316)@(GlobalTileCoordinate(-18, 30, 0);Rotate180)
+TestMod[0.0.1] Building #6 BeltDefaultLeftInternalVariant(315)@(GlobalTileCoordinate(-18, 32, 0);RotateCW)
+TestMod[0.0.1] Building #7 BeltDefaultLeftInternalVariant(318)@(GlobalTileCoordinate(-16, 30, 0);RotateCCW)
+TestMod[0.0.1] Building #8 BeltDefaultLeftInternalVariant(317)@(GlobalTileCoordinate(-16, 32, 0);NoRotate)
+TestMod[0.0.1] Building #9 Merger2To1LInternalVariantMirrored(305)@(GlobalTileCoordinate(-14, 31, 0);RotateCW)
+TestMod[0.0.1] Building #10 Merger2To1LInternalVariantMirrored(320)@(GlobalTileCoordinate(-13, 30, 0);Rotate180)
+TestMod[0.0.1] Building #11 Merger2To1LInternalVariantMirrored(319)@(GlobalTileCoordinate(-13, 32, 0);NoRotate)
+TestMod[0.0.1] Building #12 Merger2To1LInternalVariantMirrored(306)@(GlobalTileCoordinate(-12, 31, 0);RotateCCW)
+TestMod[0.0.1] Building #13 Merger2To1LInternalVariant(307)@(GlobalTileCoordinate(-10, 31, 0);RotateCCW)
+TestMod[0.0.1] Building #14 Merger2To1LInternalVariant(322)@(GlobalTileCoordinate(-9, 30, 0);NoRotate)
+TestMod[0.0.1] Building #15 Merger2To1LInternalVariant(321)@(GlobalTileCoordinate(-9, 32, 0);Rotate180)
+TestMod[0.0.1] Building #16 Merger2To1LInternalVariant(308)@(GlobalTileCoordinate(-8, 31, 0);RotateCW)
+TestMod[0.0.1] Building #17 MergerTShapeInternalVariant(309)@(GlobalTileCoordinate(-6, 31, 0);NoRotate)
+TestMod[0.0.1] Building #18 MergerTShapeInternalVariant(324)@(GlobalTileCoordinate(-5, 30, 0);RotateCW)
+TestMod[0.0.1] Building #19 MergerTShapeInternalVariant(323)@(GlobalTileCoordinate(-5, 32, 0);RotateCCW)
+TestMod[0.0.1] Building #20 MergerTShapeInternalVariant(310)@(GlobalTileCoordinate(-4, 31, 0);Rotate180)
+TestMod[0.0.1] Building #21 Merger3To1InternalVariant(311)@(GlobalTileCoordinate(-2, 31, 0);Rotate180)
+TestMod[0.0.1] Building #22 Merger3To1InternalVariant(326)@(GlobalTileCoordinate(-1, 30, 0);RotateCCW)
+TestMod[0.0.1] Building #23 Merger3To1InternalVariant(325)@(GlobalTileCoordinate(-1, 32, 0);RotateCW)
+TestMod[0.0.1] Building #24 Merger3To1InternalVariant(312)@(GlobalTileCoordinate(0, 31, 0);NoRotate)
+TestMod[0.0.1] === End of Selected Buildings ===
+
+- Looks like all the rotations are just the opposite, except for the belt turns.
+
+- The game probably has methods to rotate the buildings (entire selections).  I would probably need to add more for reversing the belts.
+- I need a way to replace the buildings.  Probably not just change the values, but actually delete the old building and add a new one in its place.
+
+- BuildingPlacersCreator might have code to place buildings.
+
+- IMapModel has create and delete building methods.  Maybe I can use those to replace the buildings.
+
+IMapModel map = GameHelper.Core.LocalPlayer.Map;
+
+// Define transform (position + rotation)
+var position = new GlobalTileCoordinate(x, y, layer);
+var transform = new GlobalTileTransform(position, GridRotation.North);
+
+// Create the building
+BuildingModel building = map.CreateBuilding(
+    definition,      // IBuildingDefinition - building type
+    transform,       // GlobalTileTransform - where and rotation
+    configuration    // IBuildingConfiguration - settings (can be null)
+);
+
+- BuildingsModulesLookup has...
+    public readonly Dictionary<BuildingDefinitionId, IBuildingDefinition> BuildingSimulationData = new Dictionary<BuildingDefinitionId, IBuildingDefinition>();

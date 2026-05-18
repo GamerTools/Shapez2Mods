@@ -69,10 +69,22 @@
             <HintPath>$(SPZ2_PATH)\UnityEngine.ImageConversionModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="Unity.Mathematics">
-            <HintPath>$(SPZ2_PATH)\Unity.Mathematics.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
+		<Reference Include="Unity.Core">
+			<HintPath>$(SPZ2_PATH)\Unity.Core.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Unity.Mathematics">
+			<HintPath>$(SPZ2_PATH)\Unity.Mathematics.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Unity.InputSystem">
+			<HintPath>$(SPZ2_PATH)\Unity.InputSystem.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UIModule">
+			<HintPath>$(SPZ2_PATH)\UnityEngine.UIModule.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="Game.Core.Modding">
 			<HintPath>$(SPZ2_PATH)\Game.Core.Modding.dll</HintPath>
 			<Private>False</Private>

@@ -24,7 +24,17 @@ using ILogger = Core.Logging.ILogger;
 public class MyMod : IMod
 {
     public static ILogger logger;
+    
     private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
+    private Hook GameInitHook;
+    private Hook SessionInitHook;
+    private Hook CameraHook;
+    private Hook BuildingsHook;
+    private GameObject inputHandlerObject;
+
+    public static GlobalsData Globals;
+    public static DependencyContainer GameDependencyContainer;
+    public static DependencyContainer SessionDependencyContainer;
 
     public MyMod(ILogger logger)
     {
@@ -34,6 +44,13 @@ public class MyMod : IMod
 
         // Initialize ClassInspector with logger
         ClassInspector.SetLogger(logger);
+
+        // Initialize InputHandler with logger and create GameObject
+        // Press R to log selected buildings to the log file
+        InputHandler.SetLogger(logger);
+        inputHandlerObject = new GameObject("ModInputHandler");
+        inputHandlerObject.AddComponent<InputHandler>();
+        GameObject.DontDestroyOnLoad(inputHandlerObject);
 
         consoleRewirer = this.AddModCommands();
         AddConsoleCommands();
@@ -51,8 +68,20 @@ public class MyMod : IMod
 
             console.Register("test", context =>
             {
-                context.Output($"Layers: {GameHelper.Core.Mode.Scenario.ResearchConfig.MaxShapeLayers}");
-                context.Output($"Parts: {GameHelper.Core.Mode.ShapesConfiguration.PartCount}");
+                var mode = GameHelper.Core.Mode;
+                context.Output($"Layers: {mode.Scenario.ResearchConfig.MaxShapeLayers}");
+                context.Output($"Parts: {mode.ShapesConfiguration.PartCount}");
+
+                var bs = GameHelper.Core.LocalPlayer.InteractionState.BuildingSelection;
+                context.Output($"Number of selected machines: {bs.Count}");
+
+                var buildings = SessionDependencyContainer.Resolve<BuildingsModulesLookup>().BuildingSimulationData;
+                MyMod.logger.Info.Log("List of buildings:");
+                foreach (var building in buildings)
+                {
+                    MyMod.logger.Info.Log($"{building.Key}: {building.Value}");
+                }
+
                 //var savegameManager = GameDependencyContainer.Resolve<ISavegameManager>();
                 //var gameSessionOrchestrator = dependencyContainer.Resolve<GameSessionOrchestrator>();
             });
@@ -90,7 +119,7 @@ public class MyMod : IMod
             console.Register("allglobal", context =>
             {
                 context.Output("Inspecting globals...");
-                ClassInspector.DisplayClassMembers(typeof(GlobalsData), globals, maxDepth: 3);
+                ClassInspector.DisplayClassMembers(typeof(GlobalsData), Globals, maxDepth: 3);
                 context.Output("Inspection complete. Check logs for details.");
             });
 
@@ -111,13 +140,6 @@ public class MyMod : IMod
         });
     }
 
-    private Hook GameInitHook;
-    private Hook SessionInitHook;
-    private Hook PIHook;
-    private GlobalsData globals;
-    private DependencyContainer GameDependencyContainer;
-    private DependencyContainer SessionDependencyContainer;
-
     public void CreateHooks()
     {
         MyMod.logger.Info.Log("##### Making Hooks");
@@ -128,34 +150,45 @@ public class MyMod : IMod
         SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
             original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
             postfix: GetSessionData);
-        PIHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
+        CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
             original: (orchestrator, gameData, cameraSettings, keybindings) => orchestrator.Init_6_PlayerInteraction(gameData, cameraSettings, keybindings),
-            postfix: GetPIData);
+            postfix: BindCamera);
+        BuildingsHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, BuildingsModulesLookup> (
+            original: (orchestrator, modules) => orchestrator.InjectBuildingsModuleProviders(modules),
+            postfix: BindBuildings);
     }
 
-    private UniTask GetGameData(GameOrchestrator orchestrator, UniTask result)
+    private UniTask GetGameData(GameOrchestrator self, UniTask result)
     {
-        this.GameDependencyContainer = orchestrator.InitializationDependencyContainer;
+        GameDependencyContainer = self.InitializationDependencyContainer;
         return result;
     }
-
-    private void GetSessionData(GameSessionOrchestrator orchestrator, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
+    private void GetSessionData(GameSessionOrchestrator self, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
     {
-        this.globals = globals;
-        this.SessionDependencyContainer = orchestrator.DependencyContainer;
+        Globals = globals;
+        SessionDependencyContainer = self.DependencyContainer;
     }
-
-    private void GetPIData(GameSessionOrchestrator orchestrator, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
+    private void BindCamera(GameSessionOrchestrator self, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
     {
-        orchestrator.DependencyContainer.Bind<CameraController>().To(orchestrator.PlayerInteractionOrchestrator.CameraController);
+        self.DependencyContainer.Bind<CameraController>().To(self.PlayerInteractionOrchestrator.CameraController);
+    }
+    private void BindBuildings(GameSessionOrchestrator self, BuildingsModulesLookup buildingsModulesLookup)
+    {
+        self.DependencyContainer.Bind<BuildingsModulesLookup>().To(buildingsModulesLookup);
     }
 
     public void Dispose()
     {
         GameInitHook?.Dispose();
         SessionInitHook?.Dispose();
-        PIHook?.Dispose();
+        CameraHook?.Dispose();
+        BuildingsHook?.Dispose();
         consoleRewirer?.Dispose();
+
+        if (inputHandlerObject != null)
+        {
+            GameObject.Destroy(inputHandlerObject);
+        }
     }
 }
 
