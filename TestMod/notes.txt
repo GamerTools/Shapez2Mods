@@ -220,3 +220,9 @@ TODO
 - Ideally hook my code into the simulation update loop, or maybe make it a new simulation.
 - For now, use the update() in my game object.
 - Keypress should only work when in space view. To prevent triggering the action when editing machines.
+- When in map view, follow the train, but don't change the camera rotation.
+- Don't do anything while in the pause menu, or other game screens.
+- Put the camera on the model of the train head.  Currently the camera target is the chunk of the track.
+
+- Got a prototype working.
+- The camera moves to the chunk.  I want it to be bound to the front of the train, and have the same movements (rotation and angle as the model).

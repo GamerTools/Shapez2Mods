@@ -23,9 +23,10 @@ public class MyGameObject : MonoBehaviour
 
     void Update()
     {
-        // Check if R key is pressed
+        // Check if period key is pressed
+        // TODO: add keys for next, previous, and unbind.
         if (UnityEngine.InputSystem.Keyboard.current != null && 
-            UnityEngine.InputSystem.Keyboard.current.rKey.wasPressedThisFrame)
+            UnityEngine.InputSystem.Keyboard.current.periodKey.wasPressedThisFrame)
         {
             ToggleTrain();
         }
@@ -34,11 +35,18 @@ public class MyGameObject : MonoBehaviour
             return;
         }
         var trainData = TrainSim.GetTrainData(CurrentTrainId);
-        var dir = trainData.Head.Outgoing;
-        var pos = dir.Position.ToOrigin_G();
+        var inDir = trainData.Head.Incoming;
+        var outDir = trainData.Head.Outgoing;
+        var pos = outDir.Position.ToOrigin_G();
         var camera = MyMod.SessionDependencyContainer.Resolve<CameraController>();
         camera.CurrentPosition = new double2(pos.x + 10, -pos.y - 10);
-        switch (dir.Direction.Value)
+        // TODO: Get the train model's positiona and rotation.
+        // TODO: Set the camera position (not the target).
+
+        // This should make the camera change rotation only if the train is actually turning, and not when it is just moving straight.
+        if (inDir.Direction.Value == outDir.Direction.Value) { return; }
+        // TODO: Compute the difference in rotation between the incoming and outgoing direction, and add it to the current camera rotation, instead of just snapping to the outgoing direction.
+        switch (outDir.Direction.Value)
         {
             case ChunkDirection.Serializable.North:
                 camera.TargetRotationDegrees = 0f;
@@ -64,7 +72,7 @@ public class MyGameObject : MonoBehaviour
         var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
         TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
         TrainIds = TrainSim.GetAllTrains(Allocator.Persistent);
-        _logger.Info.Log($"TrainIds {TrainIds}");
+        //_logger.Info.Log($"TrainIds {TrainIds}");
         if (TrainIds.Length == 0)
         {
             return;
