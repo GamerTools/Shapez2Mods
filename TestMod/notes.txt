@@ -180,3 +180,43 @@ BuildingModel building = map.CreateBuilding(
 
 - BuildingsModulesLookup has...
     public readonly Dictionary<BuildingDefinitionId, IBuildingDefinition> BuildingSimulationData = new Dictionary<BuildingDefinitionId, IBuildingDefinition>();
+
+- looking for list of trains and their positions...
+public class TrainsSimulation : ITrainLifetimeController, IUpdatableSimulation, ISimulation, IDisposable
+public struct TrainSimulationData : IDisposable
+- CreateTrain() looks promising...
+    public TrainModel CreateTrain(TrainDefinition definition, GlobalTileCoordinate position, GridRotation rotation, int initialItemCount, ItemStack? initialItems = null)
+    public NativeArray<TrainId> GetAllTrains(Allocator allocator)
+    {
+        return TrainsIds.ToNativeArray(allocator);
+    }
+
+    public TrainData GetTrainData(TrainId id)
+    {
+        return new TrainData(TrainsNavigationSimulator.TrainProgress(id), TrainsNavigationSimulator.TrainColor(id), TrainsNavigationSimulator.WagonsNavigationData(id));
+    }
+- And TrainsNavigationSimulator...
+public class TrainsNavigationSimulator : IUpdatableSimulation, ISimulation, IDisposable
+{
+    private readonly DisposableDictionary<TrainId, TrainSimulationData> Trains = new DisposableDictionary<TrainId, TrainSimulationData>();
+
+- How to get trains...
+
+- Session orchestrator has this...
+        MapSerializer = new MapSerializer(Mode, ShapeRegistry, FluidRegistry, MapModel, Simulator.GetSystem<TrainSystem>(), moddingFrameworkEnvironment.Context, gameMigrators, Logger);
+- Which seems to create the train simulation.
+Map.Simulator.GetSystem<TrainSystem>()
+
+- I was able to list the trains and their chunk positions.
+
+TODO
+- Key that binds camera to the first train head.
+- Key to switch to next train.
+- Key to unbind camera from train.
+- Could all be the same key, just switch between them.
+- Detect when train is destroyed, and then unbind camera from it.
+- Get train pogress (inside of chunk) and use that to set the camera position, so it is smooth as the train moves.
+- Nice to have: be able to look around with mouse while camera is bound to train.
+- Ideally hook my code into the simulation update loop, or maybe make it a new simulation.
+- For now, use the update() in my game object.
+- Keypress should only work when in space view. To prevent triggering the action when editing machines.

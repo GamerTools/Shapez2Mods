@@ -1,18 +1,18 @@
 ﻿using Core.Dependency;
 using Cysharp.Threading.Tasks;
+using Game.Core.Trains;
 using Game.Orchestration;
-using JetBrains.Annotations;
 using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Kit;
 using ShapezShifter.SharpDetour;
 using ShapezShifter.Utilities;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using static ShapezShifter.Flow.ModConsoleCommandsCreator;
 using ILogger = Core.Logging.ILogger;
 
-[UsedImplicitly]
 public class MyMod : IMod
 {
     public static ILogger logger;
@@ -22,7 +22,7 @@ public class MyMod : IMod
     private Hook SessionInitHook;
     private Hook CameraHook;
     private Hook BuildingsHook;
-    private GameObject inputHandlerObject;
+    private GameObject myGameObject;
 
     public static GlobalsData Globals;
     public static DependencyContainer GameDependencyContainer;
@@ -37,12 +37,10 @@ public class MyMod : IMod
         // Initialize ClassInspector with logger
         ClassInspector.SetLogger(logger);
 
-        // Initialize InputHandler with logger and create GameObject
-        // Press R to log selected buildings to the log file
-        InputHandler.SetLogger(logger);
-        inputHandlerObject = new GameObject("ModInputHandler");
-        inputHandlerObject.AddComponent<InputHandler>();
-        GameObject.DontDestroyOnLoad(inputHandlerObject);
+        MyGameObject.SetLogger(logger);
+        myGameObject = new GameObject("MyGameObject");
+        myGameObject.AddComponent<MyGameObject>();
+        GameObject.DontDestroyOnLoad(myGameObject);
 
         consoleRewirer = this.AddModCommands();
         AddConsoleCommands();
@@ -129,6 +127,20 @@ public class MyMod : IMod
                 ClassInspector.LogDependencyContainerClasses(SessionDependencyContainer);
                 context.Output("Listing complete. Check logs for details.");
             });
+            console.Register("listtrains", context =>
+            {
+                context.Output("Listing trains...");
+                var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
+                var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
+                var trains = trainSim.GetAllTrains(Allocator.Temp);
+                foreach ( var trainId in trains )
+                {
+                    var trainData = trainSim.GetTrainData(trainId);
+                    var pos = trainData.Head.Incoming;
+                    context.Output($"Train {trainId}: {pos}");
+                }
+                trains.Dispose();
+            });
         });
     }
 
@@ -177,9 +189,9 @@ public class MyMod : IMod
         BuildingsHook?.Dispose();
         consoleRewirer?.Dispose();
 
-        if (inputHandlerObject != null)
+        if (myGameObject != null)
         {
-            GameObject.Destroy(inputHandlerObject);
+            GameObject.Destroy(myGameObject);
         }
     }
 }
