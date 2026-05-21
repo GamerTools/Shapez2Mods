@@ -1,4 +1,6 @@
-﻿using Core.Dependency;
+﻿using System;
+using System.Linq;
+using Core.Dependency;
 using Cysharp.Threading.Tasks;
 using Game.Core.Trains;
 using Game.Orchestration;
@@ -127,6 +129,37 @@ public class MyMod : IMod
                 ClassInspector.LogDependencyContainerClasses(SessionDependencyContainer);
                 context.Output("Listing complete. Check logs for details.");
             });
+
+            console.Register("listasm", new DebugConsole.StringOption("name"), context =>
+            {
+                string assemblyName = context.GetString(0);
+                context.Output($"Listing types in assembly '{assemblyName}'...");
+                ClassInspector.LogAssemblyTypesByName(assemblyName);
+                context.Output("Listing complete. Check logs for details.");
+            });
+
+            console.Register("listasmall", context =>
+            {
+                context.Output("Listing all loaded assemblies...");
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                    .OrderBy(a => a.GetName().Name)
+                    .ToList();
+
+                context.Output($"Total loaded assemblies: {assemblies.Count}");
+                foreach (var asm in assemblies)
+                {
+                    context.Output($"  {asm.GetName().Name}");
+                }
+            });
+
+            console.Register("listasmwiki", context =>
+            {
+                context.Output("Generating MediaWiki documentation for all game assemblies...");
+                context.Output("This may take a moment. Check logs for output.");
+                ClassInspector.LogAllAssembliesAsMediaWiki();
+                context.Output("MediaWiki documentation generated. Check logs for output.");
+            });
+
             console.Register("listtrains", context =>
             {
                 context.Output("Listing trains...");
