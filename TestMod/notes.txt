@@ -226,3 +226,15 @@ TODO
 
 - Got a prototype working.
 - The camera moves to the chunk.  I want it to be bound to the front of the train, and have the same movements (rotation and angle as the model).
+
+- Need to find where train anaimation and rendering is done.
+- I see this, but don't know what calls it...
+class TrainJumpInterpreterHelper
+{
+    public static TrainJumpRenderData ReinterpretWagonDataAsJump(in TrainData train, in WagonNavigationData wagonData)
+
+- looking for wires...
+Game.Orchestraion.SignalBuildingsPlacersCreator
+
+- TrainsDrawer has train interpolation code.
+

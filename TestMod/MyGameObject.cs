@@ -15,10 +15,12 @@ public class MyGameObject : MonoBehaviour
     private TrainId CurrentTrainId = TrainId.Invalid;
     private NativeArray<TrainId> TrainIds;
     private TrainsSimulation TrainSim;
+    private GameObject CurrentTrainGameObject;
 
     public static void SetLogger(ILogger logger)
     {
         _logger = logger;
+        TrainGameObjectHelper.SetLogger(logger);
     }
 
     void Update()
@@ -34,33 +36,12 @@ public class MyGameObject : MonoBehaviour
         {
             return;
         }
-        var trainData = TrainSim.GetTrainData(CurrentTrainId);
-        var inDir = trainData.Head.Incoming;
-        var outDir = trainData.Head.Outgoing;
-        var pos = outDir.Position.ToOrigin_G();
-        var camera = MyMod.SessionDependencyContainer.Resolve<CameraController>();
-        camera.CurrentPosition = new double2(pos.x + 10, -pos.y - 10);
-        // TODO: Get the train model's positiona and rotation.
-        // TODO: Set the camera position (not the target).
 
-        // This should make the camera change rotation only if the train is actually turning, and not when it is just moving straight.
-        if (inDir.Direction.Value == outDir.Direction.Value) { return; }
-        // TODO: Compute the difference in rotation between the incoming and outgoing direction, and add it to the current camera rotation, instead of just snapping to the outgoing direction.
-        switch (outDir.Direction.Value)
-        {
-            case ChunkDirection.Serializable.North:
-                camera.TargetRotationDegrees = 0f;
-                break;
-            case ChunkDirection.Serializable.East:
-                camera.TargetRotationDegrees = 90f;
-                break;
-            case ChunkDirection.Serializable.South:
-                camera.TargetRotationDegrees = 180f;
-                break;
-            case ChunkDirection.Serializable.West:
-                camera.TargetRotationDegrees = 270f;
-                break;
-        }
+        var trainData = TrainSim.GetTrainData(CurrentTrainId);
+        var camera = MyMod.SessionDependencyContainer.Resolve<CameraController>();
+        var (position, rotation) = TrainSimulationHelper.CalculateTrainPosition(trainData);
+        camera.CurrentPosition = position;
+        camera.TargetRotationDegrees = rotation;
     }
 
     private void ToggleTrain()
@@ -69,6 +50,10 @@ public class MyGameObject : MonoBehaviour
         {
             TrainIds.Dispose();
         }
+
+        // Clear the current train GameObject reference
+        CurrentTrainGameObject = null;
+
         var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
         TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
         TrainIds = TrainSim.GetAllTrains(Allocator.Persistent);
