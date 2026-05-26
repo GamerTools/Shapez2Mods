@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Core.Dependency;
+﻿using Core.Dependency;
 using Cysharp.Threading.Tasks;
 using Game.Core.Trains;
 using Game.Orchestration;
@@ -8,6 +6,8 @@ using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Kit;
 using ShapezShifter.SharpDetour;
+using System;
+using System.Linq;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -36,10 +36,10 @@ public class MyMod : IMod
         MyMod.logger.Info.Log("Hello from Test Mod!");
 
         // Initialize ClassInspector with logger
-        ClassInspector.SetLogger(logger);
-
-        TrainSimulationHelper.SetLogger(logger);
         MyGameObject.SetLogger(logger);
+        ClassInspector.SetLogger(logger);
+        TrainSimulationHelper.SetLogger(logger);
+
         myGameObject = new GameObject("MyGameObject");
         myGameObject.AddComponent<MyGameObject>();
         GameObject.DontDestroyOnLoad(myGameObject);
@@ -63,16 +63,6 @@ public class MyMod : IMod
                 var mode = GameHelper.Core.Mode;
                 context.Output($"Layers: {mode.Scenario.ResearchConfig.MaxShapeLayers}");
                 context.Output($"Parts: {mode.ShapesConfiguration.PartCount}");
-
-                //var bs = GameHelper.Core.LocalPlayer.InteractionState.BuildingSelection;
-                //context.Output($"Number of selected machines: {bs.Count}");
-
-                //var buildings = SessionDependencyContainer.Resolve<BuildingsModulesLookup>().BuildingSimulationData;
-                //MyMod.logger.Info.Log("List of buildings:");
-                //foreach (var building in buildings)
-                //{
-                //    MyMod.logger.Info.Log($"{building.Key}: {building.Value}");
-                //}
 
                 //var savegameManager = GameDependencyContainer.Resolve<ISavegameManager>();
                 //var gameSessionOrchestrator = dependencyContainer.Resolve<GameSessionOrchestrator>();
@@ -162,11 +152,12 @@ public class MyMod : IMod
                 trains.Dispose();
             });
 
-            console.Register("listtrainobjects", context =>
+            console.Register("searchobjects", new DebugConsole.StringOption("pattern"), context =>
             {
-                context.Output("Listing all train GameObjects in the scene...");
+                string pattern = context.GetString(0);
+                context.Output($"Searching for GameObjects matching '{pattern}'...");
                 context.Output("Check logs for detailed output.");
-                TrainGameObjectHelper.LogAllTrainObjects();
+                GameObjectHelper.SearchGameObjects(pattern);
             });
 
             console.Register("searchobjects", new DebugConsole.StringOption("pattern"), context =>
@@ -174,46 +165,16 @@ public class MyMod : IMod
                 string pattern = context.GetString(0);
                 context.Output($"Searching for GameObjects matching '{pattern}'...");
                 context.Output("Check logs for detailed output.");
-                TrainGameObjectHelper.SearchGameObjects(pattern);
+                //GameObjectHelper.ListObjectsByType<DependencyContainer>();
             });
 
             console.Register("listallnames", context =>
             {
                 context.Output("Listing all unique GameObject names in the scene...");
                 context.Output("This may take a moment. Check logs for output.");
-                TrainGameObjectHelper.ListAllUniqueGameObjectNames();
+                GameObjectHelper.ListAllUniqueGameObjectNames();
             });
 
-            console.Register("checkecs", context =>
-            {
-                context.Output("Checking for Unity ECS/DOTS assemblies...");
-                TrainSimulationHelper.CheckForECS();
-                context.Output("Check logs for results.");
-            });
-
-            console.Register("traindata", context =>
-            {
-                context.Output("Getting detailed train simulation data...");
-                var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-                var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
-                var trains = trainSim.GetAllTrains(Allocator.Temp);
-
-                if (trains.Length == 0)
-                {
-                    context.Output("No trains found!");
-                }
-                else
-                {
-                    context.Output($"Logging data for {trains.Length} train(s)...");
-                    foreach (var trainId in trains)
-                    {
-                        TrainSimulationHelper.LogTrainSimulationData(trainId, trainSim);
-                    }
-                }
-
-                trains.Dispose();
-                context.Output("Check logs for detailed output.");
-            });
         });
     }
 
@@ -247,11 +208,11 @@ public class MyMod : IMod
     }
     private void BindCamera(GameSessionOrchestrator self, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
     {
-        //self.DependencyContainer.Bind<CameraController>().To(self.PlayerInteractionOrchestrator.CameraController);
+        self.DependencyContainer.Bind<CameraController>().To(self.PlayerInteractionOrchestrator.CameraController);
     }
     private void BindBuildings(GameSessionOrchestrator self, BuildingsModulesLookup buildingsModulesLookup)
     {
-        //self.DependencyContainer.Bind<BuildingsModulesLookup>().To(buildingsModulesLookup);
+        self.DependencyContainer.Bind<BuildingsModulesLookup>().To(buildingsModulesLookup);
     }
 
     public void Dispose()

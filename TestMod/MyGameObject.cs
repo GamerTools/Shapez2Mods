@@ -1,7 +1,4 @@
-using Assimp;
-using Game.Core.Coordinates;
 using Game.Core.Trains;
-using MonoMod.Cil;
 using ShapezShifter.Kit;
 using System;
 using Unity.Collections;
@@ -20,7 +17,7 @@ public class MyGameObject : MonoBehaviour
     public static void SetLogger(ILogger logger)
     {
         _logger = logger;
-        TrainGameObjectHelper.SetLogger(logger);
+        GameObjectHelper.SetLogger(logger);
     }
 
     void Update()
@@ -39,9 +36,16 @@ public class MyGameObject : MonoBehaviour
 
         var trainData = TrainSim.GetTrainData(CurrentTrainId);
         var camera = MyMod.SessionDependencyContainer.Resolve<CameraController>();
-        var (position, rotation) = TrainSimulationHelper.CalculateTrainPosition(trainData);
-        camera.CurrentPosition = position;
-        camera.TargetRotationDegrees = rotation;
+        var (pos, rot) = TrainSimulationHelper.CalculateTrainPosition(trainData);
+        ConvertToCamera(ref pos, ref rot);
+        camera.CurrentPosition = pos;
+        camera.TargetRotationDegrees = rot;
+    }
+
+    // TODO: Should depend on the current mode.
+    public static void ConvertToCamera(ref double2 pos, ref float rot)
+    {
+        pos.y = -pos.y;
     }
 
     private void ToggleTrain()
