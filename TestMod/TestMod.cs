@@ -17,7 +17,7 @@ using ILogger = Core.Logging.ILogger;
 public class MyMod : IMod
 {
     public static ILogger logger;
-    
+
     private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
     private Hook GameInitHook;
     private Hook SessionInitHook;
@@ -143,7 +143,7 @@ public class MyMod : IMod
                 var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
                 var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
                 var trains = trainSim.GetAllTrains(Allocator.Temp);
-                foreach ( var trainId in trains )
+                foreach (var trainId in trains)
                 {
                     var trainData = trainSim.GetTrainData(trainId);
                     var pos = trainData.Head.Incoming;
@@ -158,14 +158,6 @@ public class MyMod : IMod
                 context.Output($"Searching for GameObjects matching '{pattern}'...");
                 context.Output("Check logs for detailed output.");
                 GameObjectHelper.SearchGameObjects(pattern);
-            });
-
-            console.Register("searchobjects", new DebugConsole.StringOption("pattern"), context =>
-            {
-                string pattern = context.GetString(0);
-                context.Output($"Searching for GameObjects matching '{pattern}'...");
-                context.Output("Check logs for detailed output.");
-                //GameObjectHelper.ListObjectsByType<DependencyContainer>();
             });
 
             console.Register("listallnames", context =>
@@ -191,7 +183,7 @@ public class MyMod : IMod
         CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
             original: (orchestrator, gameData, cameraSettings, keybindings) => orchestrator.Init_6_PlayerInteraction(gameData, cameraSettings, keybindings),
             postfix: BindCamera);
-        BuildingsHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, BuildingsModulesLookup> (
+        BuildingsHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, BuildingsModulesLookup>(
             original: (orchestrator, modules) => orchestrator.InjectBuildingsModuleProviders(modules),
             postfix: BindBuildings);
     }
@@ -232,7 +224,8 @@ public class MyMod : IMod
 
 class Stuff
 {
-    Stuff(ILogger logger) {
+    Stuff(ILogger logger)
+    {
 #if DEBUG_OFF
         logger.Info.Log("Waiting for debugger to attach...");
         while (!System.Diagnostics.Debugger.IsAttached)

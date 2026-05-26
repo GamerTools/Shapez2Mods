@@ -24,7 +24,7 @@ public class MyGameObject : MonoBehaviour
     {
         // Check if period key is pressed
         // TODO: add keys for next, previous, and unbind.
-        if (UnityEngine.InputSystem.Keyboard.current != null && 
+        if (UnityEngine.InputSystem.Keyboard.current != null &&
             UnityEngine.InputSystem.Keyboard.current.periodKey.wasPressedThisFrame)
         {
             ToggleTrain();

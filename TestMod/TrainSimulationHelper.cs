@@ -1,6 +1,6 @@
+using Game.Core.Coordinates;
 using Game.Core.Trains;
 using Unity.Mathematics;
-using Game.Core.Coordinates;
 using ILogger = Core.Logging.ILogger;
 
 public static class TrainSimulationHelper

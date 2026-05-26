@@ -468,7 +468,8 @@ public static class ClassInspector
 
         // Get all loaded assemblies, exclude System and Unity assemblies
         var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => {
+            .Where(a =>
+            {
                 string name = a.GetName().Name;
                 return !name.StartsWith("System", StringComparison.OrdinalIgnoreCase) &&
                         !name.StartsWith("Unity", StringComparison.OrdinalIgnoreCase) &&
@@ -532,7 +533,8 @@ public static class ClassInspector
         {
             types = assembly.GetTypes()
                 .Where(t => !t.IsNested) // Exclude nested types for cleaner output
-                .Where(t => {
+                .Where(t =>
+                {
                     string ns = t.Namespace ?? "";
                     return !ns.StartsWith("System", StringComparison.OrdinalIgnoreCase) &&
                             !ns.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase);
@@ -545,7 +547,8 @@ public static class ClassInspector
             sb.AppendLine("");
             types = ex.Types
                 .Where(t => t != null && !t.IsNested)
-                .Where(t => {
+                .Where(t =>
+                {
                     string ns = t.Namespace ?? "";
                     return !ns.StartsWith("System", StringComparison.OrdinalIgnoreCase) &&
                             !ns.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase);
