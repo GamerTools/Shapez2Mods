@@ -194,15 +194,7 @@ Reverse Belts[0.1.0] DELETED BeltFilterDefaultInternalVariantMirrored(528)@(Glob
 Reverse Belts[0.1.0] Old Merger2To1LInternalVariant(532)@(GlobalTileCoordinate(933, 69, 0);RotateCW)
 Reverse Belts[0.1.0] New Splitter1To2LInternalVariantMirrored(568)@(GlobalTileCoordinate(933, 69, 0);RotateCCW)
 
-TODO
-- Fix belt lifts - change floors - done
-- Add belt launchers - done
-- Add Belt filters and readers - done
-- Add Overflow splitters - done
-- Add cutters and swappers - done
-- Add painters - done
-- Use Keybindings
-- Add pipe launchers and gates?
+-----
 
 Reverse Belts[0.1.0] DEBUG before (GlobalTileCoordinate(917, 62, 1);NoRotate)
 Reverse Belts[0.1.0] DEBUG after (GlobalTileCoordinate(917, 62, 1);Rotate180)
@@ -240,3 +232,35 @@ Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2750)@(GlobalTile
 Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2749)@(GlobalTileCoordinate(928, 72, 0);NoRotate)
 Reverse Belts[0.1.1] Unk PainterDefaultInternalVariantMirrored(2752)@(GlobalTileCoordinate(930, 70, 0);RotateCCW)
 
+-----
+
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariant(3985)@(GlobalTileCoordinate(916, 69, 0);RotateCCW)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariantMirrored(4006)@(GlobalTileCoordinate(916, 74, 0);RotateCW)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariant(3983)@(GlobalTileCoordinate(917, 67, 0);NoRotate)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariantMirrored(4003)@(GlobalTileCoordinate(917, 72, 0);Rotate180)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariant(3984)@(GlobalTileCoordinate(919, 68, 0);RotateCW)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariant(3982)@(GlobalTileCoordinate(918, 70, 0);Rotate180)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariantMirrored(4004)@(GlobalTileCoordinate(919, 73, 0);RotateCCW)
+Reverse Belts[0.1.2] Unk CrystalGeneratorDefaultInternalVariantMirrored(4005)@(GlobalTileCoordinate(918, 75, 0);NoRotate)
+
+-----
+
+TODO
+- Fix belt lifts - change floors - done
+- Add belt launchers - done
+- Add Belt filters and readers - done
+- Add Overflow splitters - done
+- Add cutters and swappers - done
+- Add painters - done
+- Crystal generators are not completely reversible due to the pipe connection.
+- Use Keybindings
+- Allow undo?
+- Add pipe launchers and gates?
+- What about islands like space belts, space pipes and train rails?
+
+- Looks like Map has...
+    private readonly Dictionary<BuildingId, BuildingInstance> BuildingsById = new Dictionary<BuildingId, BuildingInstance>();
+    private readonly Dictionary<BuildingInstance, BuildingId> BuildingIds = new Dictionary<BuildingInstance, BuildingId>();
+- Might be able to use those instead of hooking BuildingsModulesLookup.
+- Still not sure the differnce between Map, MapModel, MapLayout, MapLayoutModel.
+- BaseMapInteractionMode has building and island hashsets.

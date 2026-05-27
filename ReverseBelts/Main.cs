@@ -24,6 +24,7 @@ namespace ReverseBelts
             Main.logger = logger;
             Main.logger.Info.Log("Hello from Reverse Belts!");
 
+            BeltTools.SetLogger(logger);
             InputHandler.SetLogger(logger);
             inputHandlerObject = new GameObject("ModInputHandler");
             inputHandlerObject.AddComponent<InputHandler>();
