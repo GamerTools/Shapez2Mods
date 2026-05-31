@@ -24,7 +24,8 @@ namespace TrainView
             //var inPos = incoming.Position.ToOrigin_G();
             var outPos = outgoing.Position.ToOrigin_G();
 
-            double2 position = new double2(outPos.x + 0.5, outPos.y + 0.5);
+            // Set position to center of grid
+            double2 position = new double2(outPos.x + 10, outPos.y + 10);
             float rotation = GetRotationFromDirection(outgoing.Direction);
 
             return (position, rotation);
