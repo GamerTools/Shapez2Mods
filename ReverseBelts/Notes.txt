@@ -1,3 +1,5 @@
+Publish
+# steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/ReverseBelts/Steam/base.vdf" +quit;
 
 TestMod[0.0.1] === Selected Buildings ===
 TestMod[0.0.1] Total selected buildings: 24
