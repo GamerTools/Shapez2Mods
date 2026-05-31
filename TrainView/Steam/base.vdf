@@ -1,0 +1,20 @@
+"workshopitem"
+{
+	"appid"		"2162800"
+	"publishedfileid"		"0"
+	"contentfolder"		"/mnt/c/Users/garre/AppData/LocalLow/tobspr Games/shapez 2/mods/Train View"
+	"previewfile"		"/mnt/c/Users/garre/Projects/Shapez2Mods/TrainView/Steam/preview.png"
+	"visibility"		"0"
+	"title"		"Train View"
+	"description" "
+Attaches the camera to a train.  Can be used to find trains, or just for fun.
+
+How to use
+- Press '.' to connect to the next train.
+- Press ',' to connect to the previous train.
+- Press '/' to disconnect from the train.
+
+Notes:
+- This is a work in progress (WIP), so expect bugs and missing features.
+"
+}

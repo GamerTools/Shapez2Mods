@@ -1,0 +1,22 @@
+{
+  "$schema": "https://shapez2.raphdf201.net/assets/manifestSchema.json",
+  "Version": "0.1.0",
+  "Description": "Train View",
+  "Author": "FatcatX",
+  "SavedModVersionCompabilityRangeWithSelf": "0.1.*",
+  "GameVersionSupportRange": "^1.0.0",
+  "AffectsSaveGames": false,
+  "DisablesAchievements": false,
+  "Assemblies": [
+    "TrainView.dll"
+  ],
+  "Dependencies": [
+    {
+        "_ModId": "steam:3542611357",
+        "ModId": "local:ShapezShifter",
+        "ModTitle": "Shapez Shifter",
+        "Version": "^1.0.0"
+    }
+  ],
+  "Conflicts": []
+}
