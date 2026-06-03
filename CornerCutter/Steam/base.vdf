@@ -7,7 +7,7 @@
     "visibility" "0"
     "title" "Corner Cutter"
     "description" "Destroys a corner part of a shape"
-    "changenote" "Fix research upgrade ID"
+    "changenote" ""
     "tags"
     {
         "0" "New Machines"

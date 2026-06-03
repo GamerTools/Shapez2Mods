@@ -21,7 +21,7 @@ public class ShapeOperationCornerCut : ShapeOperation<ShapeDefinition, ShapeCorn
             return false;
         }
         ShapeCornerCutResult shapeCutResult = Execute(shapeItem.Definition);
-        output1 = shapeCutResult.LeftSide != null ? ShapeRegistry.GetItem(shapeCutResult.LeftSide.Shape) : (IItem)null;
+        output1 = shapeCutResult.RightSide != null ? ShapeRegistry.GetItem(shapeCutResult.RightSide.Shape) : (IItem)null;
         return true;
     }
 

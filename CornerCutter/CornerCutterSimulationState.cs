@@ -7,8 +7,8 @@ public class CornerCutterSimulationState : ISimulationState
     public readonly BeltLaneState InputLaneState = new();
     public readonly BeltLaneState OutputLaneState = new();
     public readonly BeltLaneState ProcessingLaneState = new();
-    public ShapeCollapseResult CurrentCollapseResult;
 
+    public ShapeCollapseResult CurrentCollapseResult;
     public ShapeCollapseResult CurrentWaste;
 
     public bool ProducingEmptyShape;

@@ -1,27 +1,75 @@
-﻿using System;
-using Core.Collections;
+﻿using Core.Collections;
 using Core.Localization;
+using Cysharp.Threading.Tasks;
 using Game.Core.Research;
+using Game.Orchestration;
 using JetBrains.Annotations;
+using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Flow.Atomic;
 using ShapezShifter.Flow.Research;
 using ShapezShifter.Flow.Toolbar;
 using ShapezShifter.Kit;
+using ShapezShifter.SharpDetour;
 using ShapezShifter.Textures;
+using System;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
 using Renderer = CornerCutterSimulationRenderer;
-using Simulation = CornerCutterSimulation;
 using RendererData = ICornerCutterDrawData;
+using Simulation = CornerCutterSimulation;
 
 [UsedImplicitly]
 public class CornerCuttersMod : IMod
 {
+    public static ILogger logger;
+
+    private Hook UBHook;
+    private Hook GameInitHook;
+
+    GameImageId shopImageId;
+    Sprite shopImage;
+
     public CornerCuttersMod(ILogger logger)
     {
+        CornerCuttersMod.logger = logger;
+
+        //var d = delegate (Func<GameData, GameImageId, Sprite> orig, GameData self, GameImageId id) {
+        //    if (id.IsEmpty) { logger.Info.Log("GetImage id is null"); return null; } else { return orig(self, id); }
+        //};
+        //Func<Func<GameData, GameImageId, Sprite>, GameData, GameImageId, Sprite> ImageWrapper = d;
+        //ImageHook = new Hook(
+        //    typeof(GameData).GetMethod(nameof(GameData.GetImage), new[] { typeof(GameImageId) })!,
+        //    ImageWrapper);
+
+        GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
+            original: orchestrator => orchestrator.InitializeMainMenu(),
+            postfix: (self, result) => {
+                GameData gameData = self.InitializationDependencyContainer.Resolve<IGameData>() as GameData;
+                gameData._Images.Add(shopImageId, shopImage);
+                return result;
+            });
+        UBHook = DetourHelper.CreatePostfixHook<ShapezShifter.Flow.Atomic.SideUpgradeBuilder, ScenarioId, ResearchProgression, ResearchSideUpgrade>(
+            original: (builder, scenarioId, progression) => builder.Build(scenarioId, progression),
+            postfix: (_, _, progression, upgrade) => {
+                if (!progression._ShopItems.Contains(upgrade))
+                {
+                    progression._ShopItems.Add(upgrade);
+                }
+                if (!progression._SideUpgradeCategories.Contains(upgrade.Category))
+                {
+                    progression._SideUpgradeCategories.Add(upgrade.Category);
+                }
+                return upgrade;
+            });
+
+        //SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
+        //    original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
+        //    postfix: GetSessionData);
+
         BuildingDefinitionGroupId groupId = new("CornerCutterGroup");
         BuildingDefinitionId definitionId = new("CornerCutter");
+        shopImageId = new GameImageId("CornerCutterShopImage");
 
         string titleId = "building-variant.cutter-corner.title";
         string titleDescription = "building-variant.cutter-corner.description";
@@ -33,11 +81,14 @@ public class CornerCuttersMod : IMod
             AssetBundleHelper.CreateForAssetBundleEmbeddedWithMod<CornerCuttersMod>("Resources/CornerCutter");
 
         string iconPath = modResourcesLocator.SubPath("CornerCutter_Icon.png");
+        Sprite icon = FileTextureLoader.LoadTextureAsSprite(iconPath, out _);
+        string shopImagePath = modResourcesLocator.SubPath("Preview.png");
+        shopImage = FileTextureLoader.LoadTextureAsSprite(shopImagePath, out _);
 
         IBuildingGroupBuilder cornerCutterGroup = BuildingGroup.Create(groupId)
            .WithTitle(titleId.T())
            .WithDescription(titleDescription.T())
-           .WithIcon(FileTextureLoader.LoadTextureAsSprite(iconPath, out _))
+           .WithIcon(icon)
            .AsNonTransportableBuilding()
            .WithPreferredPlacement(DefaultPreferredPlacementMode.LinePerpendicular)
            .WithDefaultStructureOverview();
@@ -71,13 +122,17 @@ public class CornerCuttersMod : IMod
            .Build();
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        UBHook?.Dispose();
+        GameInitHook?.Dispose();
+    }
 
     private SideUpgradePresentationData CreateSideUpgradePresentationData(string titleId, string titleDescription)
     {
         return new SideUpgradePresentationData(
             new ResearchUpgradeId("CBCornerCutter"),
-            GameImageId.Empty,
+            shopImageId,
             GameVideoId.Empty,
             titleId.T(),
             titleDescription.T(),

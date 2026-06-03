@@ -1,7 +1,7 @@
 {
-    "Version": "0.7.2",
+    "Version": "0.8.0",
     "Title": "Corner Cutter",
-    "Description": "Destroys a corner part of a shape",
+    "Description": "Destroys a corner part of a shape.",
     "Author": "FatcatX",
     "SavedModVersionCompabilityRangeWithSelf": "0.*.*",
     "GameVersionSupportRange": "*",

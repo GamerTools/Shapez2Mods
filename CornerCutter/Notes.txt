@@ -1,7 +1,7 @@
 11-Apr-2026
 Tried uploading a mod
 
-# steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/base.tmp.vdf" +quit;
+# steamcmd +login fatcatx +workshop_build_item "/mnt/c/Users/garre/Projects/Shapez2Mods/CornerCutter/Steam/base.vdf" +quit;
 
 Loading Steam API...OK
 Logging in using cached credentials.
@@ -44,3 +44,21 @@ This new machine can be unlocked by using the commands in the game Console:
 * enable cheats (see the wiki if you don't know how)
 * research.set CBCornerCutter 1
 
+In GameData...
+		foreach (Sprite sprite in Resources.LoadAll<Sprite>(text))
+			{
+				this._Images.Add(new GameImageId(sprite.name), sprite);
+			}
+
+In ShapezShifter...
+        public static Sprite LoadTextureAsSprite(string path, out Texture2D texture)
+        {
+            byte[] data = File.ReadAllBytes(path);
+
+            texture = new Texture2D(width: 2, height: 2);
+            texture.LoadImage(data);
+            return Sprite.Create(
+                texture: texture,
+                rect: new Rect(x: 0, y: 0, width: texture.width, height: texture.height),
+                pivot: new Vector2(x: 0.5f, y: 0.5f));
+        }
