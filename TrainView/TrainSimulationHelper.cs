@@ -17,9 +17,7 @@ namespace TrainView
 
         public static (double2 position, float rotation) ApproxTrainPosition(TrainId trainId)
         {
-            var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-            var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
-            TrainData trainData = trainSim.GetTrainData(trainId);
+            TrainData trainData = Main.trainSim.GetTrainData(trainId);
 
             // Get the incoming and outgoing track positions
             //var incoming = trainData.Head.Incoming;

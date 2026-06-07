@@ -25,9 +25,7 @@ namespace TrainView
             {
                 try
                 {
-                    var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-                    var TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
-                    TrainSim.GetTrainData(currentTrainId);
+                    Main.trainSim.GetTrainData(currentTrainId);
                 }
                 catch (Exception ex)
                 {
@@ -41,12 +39,12 @@ namespace TrainView
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.commaKey.wasPressedThisFrame)
             {
-                currentTrainId = PickTrain(-1);
+                currentTrainId = PickTrain(currentTrainId, -1);
             }
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.periodKey.wasPressedThisFrame)
             {
-                currentTrainId = PickTrain(+1);
+                currentTrainId = PickTrain(currentTrainId, +1);
             }
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.slashKey.wasPressedThisFrame)
@@ -57,12 +55,9 @@ namespace TrainView
             Main.currentTrainId = currentTrainId;
         }
 
-        private TrainId PickTrain(int dir)
+        private TrainId PickTrain(TrainId currentTrainId, int dir)
         {
-            var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-            var TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
-            var TrainIds = TrainSim.GetAllTrains(Allocator.Temp);
-            TrainId currentTrainId = Main.currentTrainId;
+            var TrainIds = Main.trainSim.GetAllTrains(Allocator.Temp);
             //_logger.Info.Log($"TrainIds length {TrainIds.Length}");
             if (TrainIds.Length == 0)
             {
@@ -79,7 +74,7 @@ namespace TrainView
                 index = TrainIds.IndexOf(currentTrainId);
                 index = (index + TrainIds.Length + dir) % TrainIds.Length;
             }
-            var trainId = TrainIds[index];
+            TrainId trainId = TrainIds[index];
             _logger.Info.Log($"New TrainId: {trainId}");
             return trainId;
         }

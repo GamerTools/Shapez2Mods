@@ -25,6 +25,7 @@ namespace TrainView
         public static DependencyContainer GameDependencyContainer;
         public static DependencyContainer SessionDependencyContainer;
 
+        public static TrainsSimulation trainSim;
         public static TrainId currentTrainId = TrainId.Invalid;
         private Matrix4x4 wagonTrs;
         private bool wasDrawn = false;
@@ -80,8 +81,6 @@ namespace TrainView
                 console.Register("listtrains", context =>
                 {
                     context.Output("Listing trains...");
-                    var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-                    var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
                     var trains = trainSim.GetAllTrains(Allocator.Temp);
                     foreach (var trainId in trains)
                     {
@@ -129,6 +128,7 @@ namespace TrainView
         {
             Globals = globals;
             SessionDependencyContainer = self.DependencyContainer;
+            trainSim = self.Simulator.GetSystem<TrainSystem>().TrainsSimulation;
         }
         private void BindCamera(GameSessionOrchestrator self, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
         {
