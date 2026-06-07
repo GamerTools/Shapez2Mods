@@ -1,5 +1,6 @@
 using Game.Core.Coordinates;
 using Game.Core.Trains;
+using ShapezShifter.Kit;
 using Unity.Mathematics;
 using ILogger = Core.Logging.ILogger;
 
@@ -14,11 +15,15 @@ namespace TrainView
             _logger = logger;
         }
 
-        public static (double2 position, float rotation) ApproxTrainPosition(WagonNavigationData wagonData)
+        public static (double2 position, float rotation) ApproxTrainPosition(TrainId trainId)
         {
+            var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
+            var trainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
+            TrainData trainData = trainSim.GetTrainData(trainId);
+
             // Get the incoming and outgoing track positions
-            //var incoming = trainData.Incoming;
-            var outgoing = wagonData.Outgoing;
+            //var incoming = trainData.Head.Incoming;
+            var outgoing = trainData.Head.Outgoing;
 
             // Convert to world coordinates
             //var inPos = incoming.Position.ToOrigin_G();

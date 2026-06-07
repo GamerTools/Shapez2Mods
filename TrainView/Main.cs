@@ -1,5 +1,6 @@
 using Core.Dependency;
 using Cysharp.Threading.Tasks;
+using Game.Core.Rendering.Culling;
 using Game.Core.Trains;
 using Game.Orchestration;
 using MonoMod.RuntimeDetour;
@@ -20,20 +21,25 @@ namespace TrainView
     {
         private static ILogger _logger;
 
-        private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
-        private Hook GameInitHook;
-        private Hook SessionInitHook;
-        private Hook CameraHook;
-        private Hook TrainHook;
-        private Hook OVTrainHook;
-        private GameObject myGameObject;
-
-        private delegate bool DrawTrainWagonDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs);
-        private delegate bool DrawTrainWagonOverviewDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, UnityMeshReference mesh, MaterialReference material, out Matrix4x4 wagonTrs);
-
         public static GlobalsData Globals;
         public static DependencyContainer GameDependencyContainer;
         public static DependencyContainer SessionDependencyContainer;
+
+        public static TrainId currentTrainId = TrainId.Invalid;
+        private Matrix4x4 wagonTrs;
+        private bool wasDrawn = false;
+
+        private ModConsoleCommandsCreator.ModConsoleRewirer consoleRewirer;
+        private GameObject myGameObject;
+        private Hook GameInitHook;
+        private Hook SessionInitHook;
+        private Hook CameraHook;
+        private Hook DrawHook;
+        private Hook TrainHook;
+        private Hook OVTrainHook;
+
+        private delegate bool DrawTrainWagonDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs);
+        private delegate bool DrawTrainWagonOverviewDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, UnityMeshReference mesh, MaterialReference material, out Matrix4x4 wagonTrs);
 
         public Main(ILogger logger)
         {
@@ -90,8 +96,6 @@ namespace TrainView
 
         public void CreateHooks()
         {
-            BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
-
             GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
                 original: orchestrator => orchestrator.InitializeMainMenu(),
                 postfix: GetGameData);
@@ -101,13 +105,19 @@ namespace TrainView
             CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
                 original: (orchestrator, gameData, cameraSettings, keybindings) => orchestrator.Init_6_PlayerInteraction(gameData, cameraSettings, keybindings),
                 postfix: BindCamera);
+            // void DoDraw(FrameDrawOptionsNoLOD options, MapCullResult cullResult)
+            DrawHook = DetourHelper.CreatePostfixHook<TrainsDrawer, FrameDrawOptionsNoLOD, MapCullResult>(
+                original: (drawer, options, cullResult) => drawer.DoDraw(options, cullResult),
+                postfix: Update);
+
             // Use low level hook call because ShapezShifter's detour doesn't support out parameters.
+            BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
             TrainHook = new Hook(
                 typeof(TrainsDrawer).GetMethod("DrawTrainWagon", FLAGS),
-                typeof(Main).GetMethod("UpdateTrainCamera", FLAGS), this);
+                typeof(Main).GetMethod("GetTrs", FLAGS), this);
             OVTrainHook = new Hook(
                 typeof(TrainsDrawer).GetMethod("DrawTrainWagonOverview", FLAGS),
-                typeof(Main).GetMethod("UpdateTrainCameraOverview", FLAGS), this);
+                typeof(Main).GetMethod("GetTrsOverview", FLAGS), this);
         }
 
         private UniTask GetGameData(GameOrchestrator self, UniTask result)
@@ -125,63 +135,70 @@ namespace TrainView
             self.DependencyContainer.Bind<CameraController>().To(self.PlayerInteractionOrchestrator.CameraController);
         }
 
-        private bool UpdateTrainCameraOverview(DrawTrainWagonOverviewDelegate orig, TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, UnityMeshReference mesh, MaterialReference material, out Matrix4x4 wagonTrs)
+        private void Update(TrainsDrawer self, FrameDrawOptionsNoLOD options, MapCullResult cullResult)
         {
-            //_logger.Info.Log("##### Train is in overview #####");
-            wagonTrs = default;
-            bool result = orig(self, draw, trainId, train, wagonIdx, wagonData, mesh, material, out wagonTrs);
-            if (wagonIdx != 0 || trainId != MyGameObject.CurrentTrainId)
+            if (currentTrainId == TrainId.Invalid)
             {
-                return result;
+                return;
             }
-            var (pos, rot) = TrainSimulationHelper.ApproxTrainPosition(wagonData);
+            double2 position;
+            float rotation;
+            if (wasDrawn)
+            {
+                // Get exact location using wagonTrs.
+                Vector3 pos = wagonTrs.GetPosition();
+                //_logger.Info.Log($"Using TRS position: {pos.x} {pos.y} {pos.z}");
+                position = new double2(pos[0], pos[2]);
+                rotation = wagonTrs.rotation.eulerAngles.y + 90f;
+                wasDrawn = false;
+            }
+            else
+            {
+                // No TRS data.  Get approx location using trainData.
+                try
+                {
+                    (position, rotation) = TrainSimulationHelper.ApproxTrainPosition(currentTrainId);
+                }
+                catch
+                {
+                    _logger.Info.Log($"Train not found: {currentTrainId}");
+                    return;
+                }
 
-            // convert to camera coordinates
+                // convert to camera coordinates
+                position.y = -position.y;
+            }
             var camera = Main.SessionDependencyContainer.Resolve<CameraController>();
-            pos.y = -pos.y;
-            camera.CurrentPosition = pos;
+            camera.CurrentPosition = position;
+            // Rotate the camera only if the camera is zoomed in.
+            float zoom = GameHelper.Core.Viewport.Zoom;
+            if (zoom < 75f)
+            {
+                camera.TargetRotationDegrees = rotation;
+            }
+        }
+
+        private bool GetTrs(DrawTrainWagonDelegate orig, TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs)
+        {
+            wagonTrs = Matrix4x4.identity;
+            bool result = orig(self, draw, trainId, train, wagonIdx, wagonData, out wagonTrs);
+            if (result && wagonIdx == 0 && trainId == currentTrainId)
+            {
+                wasDrawn = true;
+                this.wagonTrs = wagonTrs;
+            }
 
             return result;
         }
 
-        private bool UpdateTrainCamera(DrawTrainWagonDelegate orig, TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs)
+        private bool GetTrsOverview(DrawTrainWagonOverviewDelegate orig, TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, UnityMeshReference mesh, MaterialReference material, out Matrix4x4 wagonTrs)
         {
-            wagonTrs = default;
-            bool result = orig(self, draw, trainId, train, wagonIdx, wagonData, out wagonTrs);
-            if (wagonIdx != 0 || trainId != MyGameObject.CurrentTrainId)
+            wagonTrs = Matrix4x4.identity;
+            bool result = orig(self, draw, trainId, train, wagonIdx, wagonData, mesh, material, out wagonTrs);
+            if (result && wagonIdx == 0 && trainId == currentTrainId)
             {
-                return result;
-            }
-
-            var camera = Main.SessionDependencyContainer.Resolve<CameraController>();
-            var zoom = GameHelper.Core.Viewport.Zoom;
-            if (result == false)
-            {
-                // Train is off camera.  Get approx location using trainData.
-                //_logger.Info.Log("Train is off camera");
-                var (pos, rot) = TrainSimulationHelper.ApproxTrainPosition(wagonData);
-
-                // convert to camera coordinates
-                pos.y = -pos.y;
-                camera.CurrentPosition = pos;
-
-                // Rotate the camera only if the camera is zoomed in.
-                if (zoom < 75f)
-                {
-                    camera.TargetRotationDegrees = rot;
-                }
-            }
-            else
-            {
-                //_logger.Info.Log("Train is on camera");
-                // Train is on camera.  Get exact location using wagonTrs.
-                Vector3 pos = wagonTrs.GetPosition();
-                //_logger.Info.Log($"Train TRS position: {pos.x} {pos.y} {pos.z}");
-                camera.CurrentPosition = new double2(pos[0], pos[2]);
-                if (zoom < 75f)
-                {
-                    camera.TargetRotationDegrees = wagonTrs.rotation.eulerAngles.y + 90f;
-                }
+                wasDrawn = true;
+                this.wagonTrs = wagonTrs;
             }
 
             return result;
@@ -192,6 +209,7 @@ namespace TrainView
             GameInitHook?.Dispose();
             SessionInitHook?.Dispose();
             CameraHook?.Dispose();
+            DrawHook?.Dispose();
             TrainHook?.Dispose();
             OVTrainHook?.Dispose();
             consoleRewirer?.Dispose();

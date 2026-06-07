@@ -40,8 +40,29 @@ If traindId matches the currently selected train, and wagonIdx is 0, then use th
 - Still need an update() method that is called every frame?
 
 TODO
-- Put camera "on" train.  Need the camera's location, not the camera's target location.
+- Put camera "on" the train.  Need the camera's location, not the camera's target location.
 - Rotate the camera to match the train's rotation.  That's the train's yaw? - Done
 - Change camera Z distance.
 - Fix rotation when train is upside down.
 - Ideally the camera would go upside down with the train.
+
+- The issue is that the train drawer skips the DrawTrainWagon() method when the train is off screen.
+- What I want is the camera to snap to the train even when it's off screen.
+- I think it used to do this, by using the trainData.
+- I have that, but the postfix method is not being called.
+- So I need some update method that is called.  MyGameObject has that.
+- I could have the train render postfix cache the TRS data for the currently bound train.  And not change the camera.
+- Then in the gameObject update(), see if that data exists and use it.  Otherwise fallback to the trainData method.
+- I don't know what order these methods are called in.
+- Is it safe to delete it, or mark it as used/dirty?
+- I don't even know if they are on the same thread.  Maybe I can check that?
+- Better to use a different update method hook.  One that I know is synced with the train drawer.
+- prefix and postfix for the drawer update?  DoDraw() - I assume it's called every update.
+
+- Question: There are some cases where the wagonTrs is computed, but the wagon is not drawn.  Off camera I guess.  Should Train View use the TRS?
+
+Issue: When the train is off screen (but drawn?) the camera snaps to 0,0.
+Issue: Looks like it is always using the estimated location when snapping to the train.
+- Made a change to reverese the logic for wasDrawn.
+Issue: Now it is worse.  Train 3 overview seems to work, but trains 1 and 2 snap to zero in overview.  Zooming in, the camera is "torn" between two positions.
+- Fix: The TRS data was being initialized for every train wagon.
