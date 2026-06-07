@@ -1,22 +1,23 @@
 {
-  "$schema": "https://shapez2.raphdf201.net/assets/manifestSchema.json",
-  "Version": "0.1.0",
-  "Description": "Train View",
-  "Author": "FatcatX",
-  "SavedModVersionCompabilityRangeWithSelf": "0.1.*",
-  "GameVersionSupportRange": "^1.0.0",
-  "AffectsSaveGames": false,
-  "DisablesAchievements": false,
-  "Assemblies": [
-    "TrainView.dll"
-  ],
-  "Dependencies": [
-    {
-        "_ModId": "local:ShapezShifter",
-        "ModId": "steam:3542611357",
-        "ModTitle": "Shapez Shifter",
-        "Version": "^1.0.0"
-    }
-  ],
-  "Conflicts": []
+    "$schema": "https://shapez2.raphdf201.net/assets/manifestSchema.json",
+    "Version": "0.2.0",
+    "Description": "Train View",
+    "Author": "FatcatX",
+    "SavedModVersionCompabilityRangeWithSelf": "0.1.*",
+    "GameVersionSupportRange": "^1.0.0",
+    "AffectsSaveGames": false,
+    "DisablesAchievements": false,
+    "Assemblies": [
+        "TrainView.dll"
+    ],
+    "Replaces": "steam:3736046616",
+    "Dependencies": [
+        {
+            "ModId": "local:ShapezShifter",
+            "_ModId": "steam:3542611357",
+            "ModTitle": "Shapez Shifter",
+            "Version": "^1.0.0"
+        }
+    ],
+    "Conflicts": []
 }

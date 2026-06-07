@@ -1,0 +1,21 @@
+In TransDrawer...
+  if (lodOptions.DebugModeManager.IsActive("trains"))
+
+DrawManager.DebugModeManager.ShowView("trains");
+
+DrawManager and DebugModeManager are both in GameSessionOrchestrator.DependancyContainer.
+
+- Changes...
+                    var debugmode = SessionDependencyContainer.Resolve<DebugModeManager>();
+                    debugmode.ShowView("trains");
+- This didn't seem to do anything.
+        ActiveViews = (from name in GlobalGamePreferences.GetString("debug-views", "").Split(",")
+- There's a config file somewhere?
+- Seems to be the settings.json in the game folder.  It persisted "trains" after I set it in the game.
+
+- This looks like a likely candidate...
+    public bool DrawTrainWagon(FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs)
+If traindId matches the currently selected train, and wagonIdx is 0, then use the TRS data to get the position and rotation of the locomotive.
+
+- Issue: If the train is off camera, I still want the camera to snap to it.
+- Maybe fallback to find the position using TrainData while the train is off camera?
