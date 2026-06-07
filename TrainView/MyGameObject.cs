@@ -1,9 +1,7 @@
 using Game.Core.Trains;
 using ShapezShifter.Kit;
 using System;
-using System.ComponentModel.Design.Serialization;
 using Unity.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 using ILogger = Core.Logging.ILogger;
 
@@ -23,15 +21,19 @@ namespace TrainView
         void Update()
         {
             // Check if train was destroyed and unbind if so.
-            try
+            if (CurrentTrainId != TrainId.Invalid)
             {
-                var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
-                var TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
-                TrainSim.GetTrainData(CurrentTrainId);
-            }
-            catch (Exception ex)
-            {
-                CurrentTrainId = TrainId.Invalid;
+                try
+                {
+                    var sim = GameHelper.Core.LocalPlayer.CurrentMap.Simulator;
+                    var TrainSim = sim.GetSystem<TrainSystem>().TrainsSimulation;
+                    TrainSim.GetTrainData(CurrentTrainId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Info.Log($"Train destroyed: {CurrentTrainId}");
+                    CurrentTrainId = TrainId.Invalid;
+                }
             }
 
             // Check which key was pressed
@@ -49,9 +51,9 @@ namespace TrainView
             if (UnityEngine.InputSystem.Keyboard.current != null &&
                 UnityEngine.InputSystem.Keyboard.current.slashKey.wasPressedThisFrame)
             {
+                _logger.Info.Log($"Unbind train: {CurrentTrainId}");
                 CurrentTrainId = TrainId.Invalid;
             }
-            //_logger.Info.Log($"CurrentTrainId: {CurrentTrainId}");
         }
 
         private TrainId PickTrain(int dir)
@@ -67,7 +69,7 @@ namespace TrainView
 
             int index;
             if (CurrentTrainId == TrainId.Invalid)
-            { 
+            {
                 index = dir == 1 ? 0 : TrainIds.Length - 1;
             }
             else
@@ -75,7 +77,9 @@ namespace TrainView
                 index = TrainIds.IndexOf(CurrentTrainId);
                 index = (index + TrainIds.Length + dir) % TrainIds.Length;
             }
-            return TrainIds[index];
+            var trainId = TrainIds[index];
+            _logger.Info.Log($"New TrainId: {trainId}");
+            return trainId;
         }
 
         void OnDestroy()

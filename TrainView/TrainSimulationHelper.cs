@@ -14,11 +14,11 @@ namespace TrainView
             _logger = logger;
         }
 
-        public static (double2 position, float rotation) CalculateTrainPosition(TrainData trainData)
+        public static (double2 position, float rotation) ApproxTrainPosition(WagonNavigationData wagonData)
         {
             // Get the incoming and outgoing track positions
-            //var incoming = trainData.Head.Incoming;
-            var outgoing = trainData.Head.Outgoing;
+            //var incoming = trainData.Incoming;
+            var outgoing = wagonData.Outgoing;
 
             // Convert to world coordinates
             //var inPos = incoming.Position.ToOrigin_G();
@@ -31,9 +31,6 @@ namespace TrainView
             return (position, rotation);
         }
 
-        /// <summary>
-        /// Gets rotation in degrees for a given direction
-        /// </summary>
         private static float GetRotationFromDirection(ChunkDirection direction)
         {
             switch (direction.Value)

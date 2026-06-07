@@ -19,3 +19,29 @@ If traindId matches the currently selected train, and wagonIdx is 0, then use th
 
 - Issue: If the train is off camera, I still want the camera to snap to it.
 - Maybe fallback to find the position using TrainData while the train is off camera?
+
+- Issue: Keypress appears to be repeated a lot.
+-- Tested this - seems to be only once.
+
+- Issue: Pressing bind appears to do nothing when trains are close on screen.
+- Currently trains only seem to bind when in map mode.  I think that's overview trains.
+- Zooming in the camera stops following, but the train is still selected.  Zooming returns the camera to the train.
+- Maybe it's not calling the postfix method at all?
+- The problem was that the hook was being reused / overwritten.
+
+- Issue: The up-close and off-screen now works. But the up-close on-screen does nothing.
+- Because it's not implemented yet.
+
+- Issue: Pressing bind appears to do nothing when trains are off screen in overview mode.
+- Looks like these methods are not called when train is off screen.
+- The drawer calls TrainIsVisible() before calling DrawTrainWagon().
+- How to fix it?
+- Maybe use drawer to update the values.  If they don't exist, then fallback using trainData.
+- Still need an update() method that is called every frame?
+
+TODO
+- Put camera "on" train.  Need the camera's location, not the camera's target location.
+- Rotate the camera to match the train's rotation.  That's the train's yaw? - Done
+- Change camera Z distance.
+- Fix rotation when train is upside down.
+- Ideally the camera would go upside down with the train.
