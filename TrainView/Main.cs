@@ -95,12 +95,15 @@ namespace TrainView
 
         public void CreateHooks()
         {
+            // UniTask InitializeMainMenu()
             GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
                 original: orchestrator => orchestrator.InitializeMainMenu(),
                 postfix: GetGameData);
+            // void Init(IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
             SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
                 original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
                 postfix: GetSessionData);
+            // void Init_6_PlayerInteraction(IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
             CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
                 original: (orchestrator, gameData, cameraSettings, keybindings) => orchestrator.Init_6_PlayerInteraction(gameData, cameraSettings, keybindings),
                 postfix: BindCamera);
@@ -143,13 +146,16 @@ namespace TrainView
             }
             double2 position;
             float rotation;
+            float height = 0f;
             if (wasDrawn)
             {
                 // Get exact location using wagonTrs.
                 Vector3 pos = wagonTrs.GetPosition();
                 //_logger.Info.Log($"Using TRS position: {pos.x} {pos.y} {pos.z}");
                 position = new double2(pos[0], pos[2]);
-                rotation = wagonTrs.rotation.eulerAngles.y + 90f;
+                var wagonData = trainSim.GetTrainData(currentTrainId).Wagons[0];
+                rotation = wagonTrs.rotation.eulerAngles.y + (wagonData.UpsideDown ? -90f : 90f);
+                height = pos[1];
                 wasDrawn = false;
             }
             else
@@ -170,11 +176,20 @@ namespace TrainView
             }
             var camera = Main.SessionDependencyContainer.Resolve<CameraController>();
             camera.CurrentPosition = position;
+            var parent = GameHelper.Core.Viewport.MainCamera.transform.parent;
+            parent.position = new float3(parent.position.x, height, parent.position.z);
+
             // Rotate the camera only if the camera is zoomed in.
             float zoom = GameHelper.Core.Viewport.Zoom;
             if (zoom < 75f)
             {
                 camera.TargetRotationDegrees = rotation;
+                //var roll = wagonTrs.rotation.eulerAngles.x;
+                //var yaw = wagonTrs.rotation.eulerAngles.y;
+                //var pitch = wagonTrs.rotation.eulerAngles.z;
+                //Vector3 offset = new Vector3(0, 10f, 0);
+                //parent.position = wagonTrs.GetPosition() + offset;
+                //parent.rotation = Quaternion.Euler(0, yaw + 90f, 0);
             }
         }
 

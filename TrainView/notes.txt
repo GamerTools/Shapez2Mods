@@ -66,3 +66,13 @@ Issue: Looks like it is always using the estimated location when snapping to the
 - Made a change to reverese the logic for wasDrawn.
 Issue: Now it is worse.  Train 3 overview seems to work, but trains 1 and 2 snap to zero in overview.  Zooming in, the camera is "torn" between two positions.
 - Fix: The TRS data was being initialized for every train wagon.
+
+- ViewportHeightEasingAnimationController appears to be where height is controlled.
+- CameraController has this...
+        Parent.position = new float3((float)Viewport.Position.x, height, (float)Viewport.Position.y);
+- I don't know if changing the parent (camera?) or the global height is the correct way to do it.
+
+        MainCamera = Viewport.MainCamera;
+        Parent = MainCamera.transform.parent;
+- rotation example...
+        wagonTrs = Matrix4x4.TRS(worldPos + new WorldVector(0f, 0f, heightOffset), Quaternion.Euler(FastMath.NormalizeAngleDegrees(roll + wagonRenderData.CurrentLeanAngle), yaw, pitch), scale);
