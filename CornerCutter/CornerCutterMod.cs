@@ -34,24 +34,21 @@ public class CornerCuttersMod : IMod
     {
         CornerCuttersMod.logger = logger;
 
-        //var d = delegate (Func<GameData, GameImageId, Sprite> orig, GameData self, GameImageId id) {
-        //    if (id.IsEmpty) { logger.Info.Log("GetImage id is null"); return null; } else { return orig(self, id); }
-        //};
-        //Func<Func<GameData, GameImageId, Sprite>, GameData, GameImageId, Sprite> ImageWrapper = d;
-        //ImageHook = new Hook(
-        //    typeof(GameData).GetMethod(nameof(GameData.GetImage), new[] { typeof(GameImageId) })!,
-        //    ImageWrapper);
-
         GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
             original: orchestrator => orchestrator.InitializeMainMenu(),
-            postfix: (self, result) => {
+            postfix: (self, result) =>
+            {
                 GameData gameData = self.InitializationDependencyContainer.Resolve<IGameData>() as GameData;
                 gameData._Images.Add(shopImageId, shopImage);
+                // Remove hook
+                GameInitHook.Dispose();
+                GameInitHook = null;
                 return result;
             });
         UBHook = DetourHelper.CreatePostfixHook<ShapezShifter.Flow.Atomic.SideUpgradeBuilder, ScenarioId, ResearchProgression, ResearchSideUpgrade>(
             original: (builder, scenarioId, progression) => builder.Build(scenarioId, progression),
-            postfix: (_, _, progression, upgrade) => {
+            postfix: (_, _, progression, upgrade) =>
+            {
                 if (!progression._ShopItems.Contains(upgrade))
                 {
                     progression._ShopItems.Add(upgrade);

@@ -1,12 +1,12 @@
 {
-    "Version": "0.8.0",
+    "Version": "0.8.1",
     "Title": "Corner Cutter",
     "Description": "Destroys a corner part of a shape.",
     "Author": "FatcatX",
     "SavedModVersionCompabilityRangeWithSelf": "0.*.*",
     "GameVersionSupportRange": "*",
     "AffectsSaveGames": true,
-    "DisablesAchievements": true,
+    "DisablesAchievements": false,
     "Conflicts": [],
     "Assemblies": [
         "CornerCutter.dll"
