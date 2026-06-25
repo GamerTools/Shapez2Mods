@@ -28,8 +28,8 @@ namespace ReverseBelts
                 {
                     map.DeleteBuilding(building.Id);
                     var newBldg = map.CreateBuilding(definition, transform, config);
-                    _logger?.Info.Log($"Old {oldBldg}");
-                    _logger?.Info.Log($"New {newBldg}");
+                    //_logger?.Info.Log($"Old {oldBldg}");
+                    //_logger?.Info.Log($"New {newBldg}");
                 }
                 else
                 {

@@ -102,11 +102,15 @@
             <HintPath>$(SPZ2_PATH)\Game.Content.Features.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="Game.Orchestration">
-            <HintPath>$(SPZ2_PATH)\Game.Orchestration.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="UnityEngine.CoreModule">
+		<Reference Include="Game.Orchestration">
+			<HintPath>$(SPZ2_PATH)\Game.Orchestration.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Game.Platforms">
+			<HintPath>$(SPZ2_PATH)\Game.Platforms.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
             <HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>

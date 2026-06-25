@@ -1,8 +1,11 @@
 using Core.Dependency;
 using Cysharp.Threading.Tasks;
 using Game.Orchestration;
+using Game.Platforms;
 using MonoMod.RuntimeDetour;
 using ShapezShifter.SharpDetour;
+using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace ReverseBelts
@@ -40,8 +43,9 @@ namespace ReverseBelts
             GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
                 original: orchestrator => orchestrator.InitializeMainMenu(),
                 postfix: GetGameData);
-            SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
-                original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
+            // public void Init_1_GameOptions(GlobalsData globals, IGameStartOptions gameStartOptions, IGameData gameData, IPlatform platform)
+            SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, GlobalsData, IGameStartOptions, IGameData, IPlatform>(
+                original: (orchestrator, globals, gameStartOptions, gameData, platform) => orchestrator.Init_1_GameOptions(globals, gameStartOptions, gameData, platform),
                 postfix: GetSessionData);
             BuildingsHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, BuildingsModulesLookup>(
                 original: (orchestrator, modules) => orchestrator.InjectBuildingsModuleProviders(modules),
@@ -53,7 +57,7 @@ namespace ReverseBelts
             GameDependencyContainer = self.InitializationDependencyContainer;
             return result;
         }
-        private void GetSessionData(GameSessionOrchestrator self, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
+        private void GetSessionData(GameSessionOrchestrator self, GlobalsData globals, IGameStartOptions gameStartOptions, IGameData gameData, IPlatform platform)
         {
             Globals = globals;
             SessionDependencyContainer = self.DependencyContainer;
