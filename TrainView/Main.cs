@@ -1,8 +1,12 @@
 using Core.Dependency;
 using Cysharp.Threading.Tasks;
+using Game.Content.Rendering.Trains;
+using Game.Core.Content;
+using Game.Core.Content.Meta;
 using Game.Core.Rendering.Culling;
 using Game.Core.Trains;
 using Game.Orchestration;
+using Game.Platforms;
 using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Kit;
@@ -99,9 +103,9 @@ namespace TrainView
             GameInitHook = DetourHelper.CreatePostfixHook<GameOrchestrator, UniTask>(
                 original: orchestrator => orchestrator.InitializeMainMenu(),
                 postfix: GetGameData);
-            // void Init(IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
-            SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData>(
-                original: (orchestrator, gameStartOptions, globals, gameData) => orchestrator.Init(gameStartOptions, globals, gameData),
+            // public async UniTask Prepare(IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData, IPlatform platform, IContent content, IContentMetadataProviderCollection contentMetadata)
+            SessionInitHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameStartOptions, GlobalsData, IGameData, IPlatform, IContent, IContentMetadataProviderCollection, UniTask>(
+                original: (orchestrator, gameStartOptions, globals, gameData, platform, content, contentMetadata) => orchestrator.Prepare(gameStartOptions, globals, gameData, platform, content, contentMetadata),
                 postfix: GetSessionData);
             // void Init_6_PlayerInteraction(IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
             CameraHook = DetourHelper.CreatePostfixHook<GameSessionOrchestrator, IGameData, CameraGameSettings, Keybindings>(
@@ -127,11 +131,12 @@ namespace TrainView
             GameDependencyContainer = self.InitializationDependencyContainer;
             return result;
         }
-        private void GetSessionData(GameSessionOrchestrator self, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData)
+        private UniTask GetSessionData(GameSessionOrchestrator self, IGameStartOptions gameStartOptions, GlobalsData globals, IGameData gameData, IPlatform platform, IContent content, IContentMetadataProviderCollection contentMetadata, UniTask result)
         {
             Globals = globals;
             SessionDependencyContainer = self.DependencyContainer;
             trainSim = self.Simulator.GetSystem<TrainSystem>().TrainsSimulation;
+            return result;
         }
         private void BindCamera(GameSessionOrchestrator self, IGameData gameData, CameraGameSettings cameraSettings, Keybindings keybindings)
         {

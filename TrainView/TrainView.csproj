@@ -54,6 +54,14 @@
 			<HintPath>$(SPZ2_PATH)\Game.Core.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Game.Core.Content">
+			<HintPath>$(SPZ2_PATH)\Game.Core.Content.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Game.Core.Content.Meta">
+			<HintPath>$(SPZ2_PATH)\Game.Core.Content.Meta.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Reference Include="Core.Localization">
 			<HintPath>$(SPZ2_PATH)\Core.Localization.dll</HintPath>
 			<Private>False</Private>
@@ -94,15 +102,23 @@
             <HintPath>$(SPZ2_PATH)\Game.Content.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="Game.Content.Features">
-            <HintPath>$(SPZ2_PATH)\Game.Content.Features.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="Game.Orchestration">
+		<Reference Include="Game.Content.Features">
+			<HintPath>$(SPZ2_PATH)\Game.Content.Features.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Game.Content.Rendering">
+			<HintPath>$(SPZ2_PATH)\Game.Content.Rendering.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Game.Orchestration">
             <HintPath>$(SPZ2_PATH)\Game.Orchestration.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="UnityEngine.CoreModule">
+		<Reference Include="Game.Platforms">
+			<HintPath>$(SPZ2_PATH)\Game.Platforms.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
             <HintPath>$(SPZ2_PATH)\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
