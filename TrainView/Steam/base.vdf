@@ -10,9 +10,10 @@
 Attaches the camera to a train.  Can be used to find trains, or just for fun.
 
 How to use
+- Select a train depo and press the View button to attach the camera to the train.
+- Press Escape to disconnect the camera from the train.
 - Press '.' to connect to the next train.
 - Press ',' to connect to the previous train.
-- Press '/' to disconnect from the train.
 
 Notes
 - This is a work in progress (WIP), so expect bugs and missing features.

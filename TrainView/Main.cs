@@ -1,8 +1,11 @@
+using Core.Collections.Scoped;
 using Core.Dependency;
+using Core.Localization;
 using Cysharp.Threading.Tasks;
 using Game.Content.Rendering.Trains;
 using Game.Core.Content;
 using Game.Core.Content.Meta;
+using Game.Core.Coordinates;
 using Game.Core.Rendering.Culling;
 using Game.Core.Trains;
 using Game.Orchestration;
@@ -11,7 +14,9 @@ using MonoMod.RuntimeDetour;
 using ShapezShifter.Flow;
 using ShapezShifter.Kit;
 using ShapezShifter.SharpDetour;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -42,6 +47,7 @@ namespace TrainView
         private Hook DrawHook;
         private Hook TrainHook;
         private Hook OVTrainHook;
+        private Hook TrainPanelHook;
 
         private delegate bool DrawTrainWagonDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, out Matrix4x4 wagonTrs);
         private delegate bool DrawTrainWagonOverviewDelegate(TrainsDrawer self, FrameDrawOptionsNoLOD draw, TrainId trainId, TrainData train, int wagonIdx, WagonNavigationData wagonData, UnityMeshReference mesh, MaterialReference material, out Matrix4x4 wagonTrs);
@@ -115,6 +121,10 @@ namespace TrainView
             DrawHook = DetourHelper.CreatePostfixHook<TrainsDrawer, FrameDrawOptionsNoLOD, MapCullResult>(
                 original: (drawer, options, cullResult) => drawer.DoDraw(options, cullResult),
                 postfix: Update);
+            // IEnumerable<IHUDSidePanelModuleData> GetModules(IslandModel island)
+            TrainPanelHook = DetourHelper.CreatePostfixHook<TrainProducerSidePanelModuleProvider, IslandModel, IEnumerable<IHUDSidePanelModuleData>>(
+                original: (provider, island) => provider.GetModules(island),
+                postfix: AddViewButton);
 
             // Use low level hook call because ShapezShifter's detour doesn't support out parameters.
             BindingFlags FLAGS = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
@@ -224,6 +234,30 @@ namespace TrainView
             return result;
         }
 
+        private IEnumerable<IHUDSidePanelModuleData> AddViewButton(TrainProducerSidePanelModuleProvider self, IslandModel island, IEnumerable<IHUDSidePanelModuleData> result)
+        {
+            // return the original modules
+            foreach (var module in result)
+            {
+                yield return module;
+            }
+
+            yield return new HUDSidePanelModuleGenericButton.Data("global.btn-view".T(), delegate
+            {
+                Main.ViewButtonCallback(island.Position);
+            });
+        }
+
+        private static void ViewButtonCallback(GlobalChunkCoordinate position)
+        {
+            using ScopedList<TrainId> idList = ScopedList<TrainId>.Get();
+            trainSim.GetTrainsProducedByProducerAt(position, idList);
+            if (idList.Count == 0)
+                return;
+            currentTrainId = idList[0];
+            _logger.Info.Log($"View train: {currentTrainId}");
+        }
+
         public void Dispose()
         {
             GameInitHook?.Dispose();
@@ -232,6 +266,7 @@ namespace TrainView
             DrawHook?.Dispose();
             TrainHook?.Dispose();
             OVTrainHook?.Dispose();
+            TrainPanelHook?.Dispose();
             consoleRewirer?.Dispose();
 
             if (myGameObject != null)

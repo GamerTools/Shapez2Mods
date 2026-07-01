@@ -45,8 +45,9 @@ namespace TrainView
             {
                 currentTrainId = PickTrain(currentTrainId, +1);
             }
-            if (UnityEngine.InputSystem.Keyboard.current != null &&
-                UnityEngine.InputSystem.Keyboard.current.slashKey.wasPressedThisFrame)
+            if (currentTrainId != TrainId.Invalid &&
+                UnityEngine.InputSystem.Keyboard.current != null &&
+                UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
             {
                 _logger.Info.Log($"Unbind train: {currentTrainId}");
                 currentTrainId = TrainId.Invalid;

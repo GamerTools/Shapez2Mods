@@ -79,3 +79,24 @@ Issue: Now it is worse.  Train 3 overview seems to work, but trains 1 and 2 snap
         Parent = MainCamera.transform.parent;
 - rotation example...
         wagonTrs = Matrix4x4.TRS(worldPos + new WorldVector(0f, 0f, heightOffset), Quaternion.Euler(FastMath.NormalizeAngleDegrees(roll + wagonRenderData.CurrentLeanAngle), yaw, pitch), scale);
+
+-----
+
+- Looking for train depo context panel.
+- Using Unity Explorer, this is what I found clicking on the title in the panel...
+
+GameSessionCanvas(Clone)/HUD/HUDIslandSelectionDetailsPrefab(Clone)/HUDModularSidePanelPrefab(Clone)/RightPanel/PanelMover/PanelContents/Header/
+
+- I don't know if each panel is a prefab, or if they are all the same prefab with different data.
+- I think the panel template is prefab, so the UI content should be added in the game code.  I dont't know where in the code.
+- There must be a action that selecting a building does to open the panel.
+- I want to add a button to the panel.  Might need to change size of the panel, but don't know if that's an auto layout thing or not.
+
+- HUDIslandSelectionDetailsPrefab sounds like a template for the panel.
+    "global.btn-respawn": "Respawn",
+- This button seems to be created? here: TrainProducerSidePanelModuleProvider
+- There is a "View" button text
+    "global.btn-view": "View",
+- Okay, I can try adding a prefix method to TrainProducerSidePanelModuleProvider.GetModules() that adds a View button.
+- If I am lucky, that can be used to callback a method in my mod.
+
